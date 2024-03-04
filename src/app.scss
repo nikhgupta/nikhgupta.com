@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Qwitcher+Grypen:wght@700&display=swap');
+
+
+body {
+	@apply font-text;
+	@apply bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-slate-50;
+	@apply mx-8 mt-16 md:mx-16 md:mt-32 xl:mx-32 mb-8;
+	font-size: 16px;
+}
+
+.font-qwitcher {
+	font-family: "Qwitcher Grypen", cursive;
+	font-weight: 700;
+	font-style: normal;
+}
+
+.font-text {
+	font-family: "Bricolage Grotesque", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+	font-variation-settings:
+		"wdth" 100;
+}
+
+
+.logo {
+	@apply font-qwitcher mb-4;
+	font-size: 3rem;
+}
+
+.bio {}
+
+.avatar {
+	width: 160px;
+	height: 160px;
+	border-radius: 50% 35%;
+}
+
+a {
+	@apply text-slate-950 dark:text-slate-50;
+	text-decoration: underline;
+}
+
+p {
+	@apply font-text my-4;
+}
+
+.post-title {
+	@apply font-text text-3xl font-bold my-8;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	@apply font-text;
+}
+
+h1 {
+	@apply text-3xl;
+}
+
+h2 {
+	@apply text-2xl;
+}
+
+h3 {
+	@apply text-xl;
+}
+
+h4 {
+	@apply text-lg;
+
+}
+
+h5,
+h6 {
+	@apply text-base;
+}
