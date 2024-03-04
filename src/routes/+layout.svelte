@@ -16,17 +16,11 @@
 </div>
 
 <footer>
-	<div class="flex space-x-4 items-center leading-8">
-		<a href="https://github.com/nikhgupta" target="_blank" class="flex justify-center items-center">
-			<img src="/icons/github.svg" alt="Github" class="w-6 h-6 mr-1" />
-			Github
-		</a>
-		<a
-			href="https://in.tradingview.com/u/NikhilGuptab4/#published-scripts"
-			target="_blank"
-			class="flex justify-center items-center"
-		>
-			<img src="/icons/tradingview.svg" alt="TradingView" class="w-8 h-8 mr-1" />
+	<div class="flex space-x-4 items-center">
+		<span>Available on:</span>
+		<a href="mailto:me+web@nikhgupta.com" target="_blank">Email</a>
+		<a href="https://github.com/nikhgupta" target="_blank">Github</a>
+		<a href="https://in.tradingview.com/u/NikhilGuptab4/#published-scripts" target="_blank">
 			TradingView
 		</a>
 	</div>
