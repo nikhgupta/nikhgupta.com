@@ -86,10 +86,11 @@ export class Color {
 		return this.toHex({ h: h % 360 });
 	}
 
-	varyLight(l: number) {
+	varyLight(l: number, h: number | null = null) {
+		const hc = h ? h : this.h;
 		const lc = Math.round(l * 10000) / 10000;
 		const chroma = map[lc] < this.c ? map[lc] : this.c;
-		return this.toHex({ l, c: chroma });
+		return this.toHex({ l, c: chroma, h: hc });
 	}
 
 	hueSwatch(distance: number = 30, num: number = 11) {
@@ -134,34 +135,44 @@ export class Color {
 
 	complimentary() {
 		const colors = [];
-		// colors.push(this.toHex({ l: this.l * 0.9 }));
+		colors.push(this.varyLight(this.l * 0.9));
 		colors.push(this.toHex());
-		// colors.push(this.toHex({ l: this.l * 1.1 }));
-		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.7 }));
-		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.8 }));
-		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.9 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360 }));
-		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.1 }));
-		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.2 }));
-		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.3 }));
+		colors.push(this.varyLight(this.l * 1.1));
+		colors.push(this.varyLight(this.l * 0.9, this.h + 180));
+		colors.push(this.varyLight(this.l * 0.95, this.h + 180));
+		colors.push(this.varyHue(this.h + 180));
+		colors.push(this.varyLight(this.l * 1.05, this.h + 180));
+		colors.push(this.varyLight(this.l * 1.1, this.h + 180));
+
+		return colors;
+	}
+
+	splitComplimentary(distance: number = 30) {
+		const colors = [];
+		colors.push(this.varyLight(this.l * 0.7, this.h + 180));
+		colors.push(this.varyHue(this.h + 180));
+		colors.push(this.varyHue(this.h + distance));
+		colors.push(this.varyLight(this.l * 0.9, this.h + distance));
+		colors.push(this.varyLight(this.l * 1.1, this.h + distance));
+		colors.push(this.varyLight(this.l * 1.1, this.h - distance));
+		colors.push(this.varyHue(this.h - distance));
+		colors.push(this.varyLight(this.l * 0.9, this.h - distance));
 
 		return colors;
 	}
 
 	analogous(distance: number = 30) {
-		const h0 = this.h;
-		const h1 = h0 % 360;
-		const h2 = (h0 + distance) % 360;
-		const h3 = (h0 - distance) % 360;
-		return [h2, h3, h1].map((h) => this.toHex({ h }));
-	}
+		const colors = [];
+		colors.push(this.varyLight(this.l * 1.1, this.h + distance));
+		colors.push(this.varyLight(this.l * 0.9, this.h + distance));
+		colors.push(this.varyHue(this.h + distance));
+		colors.push(this.toHex());
+		colors.push(this.varyLight(this.l * 0.7));
+		colors.push(this.varyLight(this.l * 0.9, this.h - distance));
+		colors.push(this.varyHue(this.h - distance));
+		colors.push(this.varyLight(this.l * 1.1, this.h - distance));
 
-	splitComplimentary(distance: number = 30) {
-		const h0 = this.h;
-		const h1 = (h0 + 180) % 360;
-		const h2 = (h0 + distance) % 360;
-		const h3 = (h0 - distance) % 360;
-		return [h2, h3, h1].map((h) => this.toHex({ h }));
+		return colors;
 	}
 
 	tetradic(distance: number = 30) {

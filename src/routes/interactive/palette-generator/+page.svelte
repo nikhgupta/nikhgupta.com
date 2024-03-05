@@ -6,7 +6,7 @@
 	let numSlider = 12;
 	$: hueDistanceSlider = 360 / numSlider;
 
-	let showColor = true;
+	let showColor = false;
 	let ls = DEFAULT_COLOR.l;
 	let cs = DEFAULT_COLOR.c;
 	let hs = DEFAULT_COLOR.h;
