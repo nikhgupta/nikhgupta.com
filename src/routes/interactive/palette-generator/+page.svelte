@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Color, toggleDarkMode, DEFAULT_COLOR } from '$lib/colors';
+	import { Color, toggleDarkMode, DEFAULT_COLOR } from './colors';
 	import { Range, Label, Input, Helper } from 'flowbite-svelte';
 	import Palette from './palette.svelte';
-	import { showColor } from './store';
+	import { baseColor, showColor, zoomedPalette } from './store';
 
 	let numSlider = 12;
 	$: hueDistanceSlider = Math.min(30, 360 / numSlider);
@@ -11,6 +11,7 @@
 	let cs = DEFAULT_COLOR.c;
 	let hs = DEFAULT_COLOR.h;
 	$: color = new Color(ls, cs, hs);
+	$: baseColor.set(color);
 	$: csClamped = Math.min(color.maxChroma, cs);
 	$: toggleDarkMode(ls > 0.5 ? 0 : 1);
 
@@ -25,8 +26,9 @@
 			[ls, cs, hs] = Color.fromRandom().valuesAt('l', 'c', 'h');
 		} else if (e.code === 'KeyX') {
 			[ls, cs, hs] = Color.fromRgb('#fab').valuesAt('l', 'c', 'h');
-			numSlider = 4;
+			numSlider = 12;
 			showColor.set(false);
+			zoomedPalette.set(null);
 		} else if (e.code === 'KeyD') {
 			toggleDarkMode(-1);
 		} else if (e.code === 'KeyM') {
@@ -157,3 +159,15 @@
 		colors={color.tetradicInclusive(numSlider, hueDistanceSlider)}
 	/>
 {/if}
+
+<h2>Todos</h2>
+<ul class="list-disc list-inside mt-2">
+	<li>Allow sharing of color-palettes by linking to a permalink.</li>
+	<li>Allow exporting color palettes (and/or currently zoomed one).</li>
+	<li><del>Highlight base color in all palettes.</del></li>
+	<li>
+		<del>
+			Lightness in Color palettes (e.g. triadic, tetradic, etc) should be relative to base color.
+		</del>
+	</li>
+</ul>

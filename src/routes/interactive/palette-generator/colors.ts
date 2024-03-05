@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'culori/fn';
+import { useMode, modeOklch, modeRgb, formatHex } from 'culori/fn';
 
 import mappings from './oklch-color-mapping.json';
 const map: Record<number, number> = mappings;
@@ -16,7 +16,7 @@ const WHITE = '#fff';
 const MIN_CHROMA = 0.01;
 const MIN_LIGHT = 0.125;
 const MAX_LIGHT = 0.98;
-const MIN_LIGHT_VARY = 0.74;
+const MIN_LIGHT_VARY = 0.44;
 const MAX_LIGHT_VARY = 0.94;
 const CONTRAST_THRESHOLD = 0.5;
 const DEFAULT_SIZE = 11;
@@ -85,6 +85,10 @@ export class Color {
 		return rgb ? rgb : BLACK;
 	}
 
+	accentColor() {
+		return this.transform({ l: this.l * (this.l > 0.5 ? 0.9 : 1.1) });
+	}
+
 	transform(data: any = {}) {
 		const newData = { ...this.data, ...data };
 		return new Color(newData.l, newData.c, newData.h, newData.alpha);
@@ -129,7 +133,47 @@ export class Color {
 	}
 
 	_lightnessVary(num: number, h: number = this.h, reversed: boolean = true) {
-		return this.lightnessSwatch(num, MIN_LIGHT_VARY - num / 100, MAX_LIGHT_VARY, h, reversed);
+		if (num == 1) return [this._transformHue(h)];
+
+		const minLight = MIN_LIGHT_VARY - num / 100;
+		const maxLight = MAX_LIGHT_VARY;
+
+		let colors = [this._transformHue(h)];
+		let n = minLight > this.l ? 0 : Math.floor((num - 1) / 2);
+		let stepLower = (this.l - minLight) / n;
+		let stepUpper = (maxLight - this.l) / (num - n - 1);
+
+		// ensure that we always have colors that vary in lightness
+		// and are not too close to each other.
+		if (minLight > this.l) {
+			n = 0;
+			stepLower = 0;
+			stepUpper = (maxLight - this.l) / (num - 1);
+		} else if (maxLight < this.l) {
+			n = num - 1;
+			stepLower = (this.l - minLight) / n;
+			stepUpper = 0;
+		} else {
+			let counter = 1;
+			while (n > 0 && (stepLower < 0.05 || stepUpper < 0.05)) {
+				n = stepLower < 0.05 ? n - 1 : n + 1;
+				stepLower = (this.l - minLight) / n;
+				stepUpper = (maxLight - this.l) / (num - n - 1);
+				counter += 1;
+				if (counter > 10) break;
+			}
+		}
+
+		for (let i = 0; i < n; i++) {
+			colors.unshift(this._transformLightness(this.l - (i + 1) * stepLower, h));
+		}
+
+		for (let i = 0; i < num - n - 1; i++) {
+			colors.push(this._transformLightness(this.l + (i + 1) * stepUpper, h));
+		}
+
+		colors = reversed ? colors.reverse() : colors;
+		return colors;
 	}
 
 	shades(num: number = DEFAULT_SIZE, minLight: number = MIN_LIGHT) {
