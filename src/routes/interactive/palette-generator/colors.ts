@@ -7,8 +7,10 @@ const map: Record<number, number> = mappings;
 let randomMap: [number, number][] = [];
 Object.entries(map).forEach((item, index) => {
 	const l = parseFloat(item[0]);
-	var clone: [number, number][] = Array(Math.round(Math.min(l, 1 - l) * 100)).fill([l, item[1]]);
-	randomMap.push(...clone);
+	if (l > 0.3 && l < 0.9) {
+		var clone: [number, number][] = Array(Math.round(Math.min(l, 1 - l) * 100)).fill([l, item[1]]);
+		randomMap.push(...clone);
+	}
 });
 
 const BLACK = '#000';

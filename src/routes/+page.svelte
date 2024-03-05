@@ -33,5 +33,11 @@
 			exploring Color Theory, specifically
 			<a href="/interactive/uniform-colors-oklch">OKLCH color space for uniform colors</a>.
 		</li>
+		<li>
+			writing an
+			<a href="/interactive/palette-generator">
+				interactive palette generator based on OKLCH colorspace
+			</a> in SvelteJS.
+		</li>
 	</ul>
 </div>
