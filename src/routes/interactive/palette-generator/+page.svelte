@@ -3,7 +3,7 @@
 	import { Range, Label, Input, Helper } from 'flowbite-svelte';
 	import Palette from './palette.svelte';
 
-	let numSlider = 3;
+	let numSlider = 12;
 	$: hueDistanceSlider = 360 / numSlider;
 
 	let showColor = false;
@@ -24,7 +24,7 @@
 		} else if (e.code === 'KeyD') {
 			toggleDarkMode(-1);
 			e.preventDefault();
-		} else if (e.code === 'KeyC') {
+		} else if (e.code === 'KeyM') {
 			showColor = !showColor;
 			e.preventDefault();
 		}
@@ -84,92 +84,59 @@
 
 <p>
 	You can press <code>space</code> to randomize base color, <code>x</code> to reset base color,
-	<code>c</code> to toggle color hex values, and <code>d</code> to toggle dark mode.
+	<code>m</code> to toggle color hex values, and <code>d</code> to toggle dark mode.
 </p>
 
 <h3 class="mt-4">Swatch (hue)</h3>
 <Palette
-	baseColor={color}
-	colors={color.hueSwatch(numSlider, hueDistanceSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
+	{showColor}
 	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.hueSwatch(numSlider, hueDistanceSlider)}
 />
 
 <h3 class="mt-4">Swatch (lightness)</h3>
 <Palette
-	baseColor={color}
-	colors={color.lightnessSwatch(numSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
+	{showColor}
 	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.lightnessSwatch(numSlider)}
 />
 
 <h3 class="mt-4">Shades</h3>
-<Palette
-	baseColor={color}
-	colors={color.shades(numSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
-	className="flex mt-2 md:gap-1 mb-8"
-/>
+<Palette {showColor} colors={color.shades(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
 
 <h3 class="mt-4">Tones</h3>
-<Palette
-	baseColor={color}
-	colors={color.tones(numSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
-	className="flex mt-2 md:gap-1 mb-8"
-/>
+<Palette {showColor} colors={color.tones(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
 
 <h3 class="mt-4">Tints</h3>
-<Palette
-	baseColor={color}
-	colors={color.tints(numSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
-	className="flex mt-2 md:gap-1 mb-8"
-/>
+<Palette {showColor} colors={color.tints(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
 
 <h3 class="mt-4">Complimentary</h3>
+<Palette {showColor} className="flex mt-2 md:gap-1 mb-8" colors={color.complimentary(numSlider)} />
+
+<h3 class="mt-4">Analogous</h3>
 <Palette
-	baseColor={color}
-	colors={color.complimentary(numSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
+	{showColor}
 	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.analogous(numSlider, hueDistanceSlider)}
 />
 
 <h3 class="mt-4">Split Complimentary</h3>
 <Palette
-	baseColor={color}
+	{showColor}
+	className="flex mt-2 md:gap-1 mb-8"
 	colors={color.splitComplimentary(numSlider, hueDistanceSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
-	className="flex mt-2 md:gap-1 mb-8"
-/>
-
-<h3 class="mt-4">Analogous</h3>
-<Palette
-	baseColor={color}
-	colors={color.analogous(hueDistanceSlider)}
-	showColor={showColor && numSlider < 13}
-	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Triadic</h3>
 <Palette
-	baseColor={color}
-	colors={color.triadic(hueDistanceSlider)}
-	showColor={showColor && numSlider < 13}
+	{showColor}
 	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.triadic(numSlider, hueDistanceSlider)}
 />
 
 <h3 class="mt-4">Tetradic</h3>
 <Palette
-	baseColor={color}
-	colors={color.tetradic(hueDistanceSlider)}
-	showColor={showColor && numSlider < 13}
+	{showColor}
 	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.tetradic(numSlider, hueDistanceSlider)}
 />

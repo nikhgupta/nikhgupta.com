@@ -4,6 +4,25 @@ import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'culori/fn';
 import mappings from './oklch-color-mapping.json';
 const map: Record<number, number> = mappings;
 
+let randomMap: [number, number][] = [];
+Object.entries(map).forEach((item, index) => {
+	const l = parseFloat(item[0]);
+	var clone: [number, number][] = Array(Math.round(Math.min(l, 1 - l) * 100)).fill([l, item[1]]);
+	randomMap.push(...clone);
+});
+
+const BLACK = '#000';
+const WHITE = '#fff';
+const MIN_CHROMA = 0.01;
+const MIN_LIGHT = 0.125;
+const MAX_LIGHT = 0.98;
+const MIN_LIGHT_VARY = 0.74;
+const MAX_LIGHT_VARY = 0.94;
+const CONTRAST_THRESHOLD = 0.5;
+const DEFAULT_SIZE = 11;
+const DEFAULT_DISTANCE = 30;
+export const DEFAULT_COLOR = { l: 0.8252, c: 0.10179611632754734, h: 6.452301295903021, a: 1 }; // #fab
+
 const rgb = useMode(modeRgb);
 const lch = useMode(modeOklch);
 
@@ -14,15 +33,13 @@ export const toggleDarkMode = (mode: number = -1) => {
 		const body = document.getElementsByTagName('body')[0];
 		if (mode === 1) {
 			html.classList.add('dark');
-			body.style.backgroundColor = 'black';
+			body.style.backgroundColor = BLACK;
 		} else {
 			html.classList.remove('dark');
-			body.style.backgroundColor = 'white';
+			body.style.backgroundColor = WHITE;
 		}
 	}
 };
-
-export const DEFAULT_COLOR = { l: 0.8252, c: 0.10179611632754734, h: 6.452301295903021, a: 1 };
 
 export class Color {
 	data: any;
@@ -41,27 +58,18 @@ export class Color {
 		this.maxChroma = this.maxChromaFor(l);
 		this.c = this.maxChroma < c ? this.maxChroma : c;
 
-		this.contrastColor = this.l > 0.5 ? '#000' : '#fff';
+		this.contrastColor = this.l > CONTRAST_THRESHOLD ? BLACK : WHITE;
 		this.data = { mode: 'oklch', l, c: this.c, h, alpha: a };
 	}
 
 	static fromRgb(color: string) {
-		const lchValue = { mode: 'oklch', h: 0, l: 0, c: 0.01, alpha: 1, ...lch(rgb(color)) };
+		const lchValue = { mode: 'oklch', h: 0, l: 0, c: MIN_CHROMA, alpha: 1, ...lch(rgb(color)) };
 		return new Color(lchValue.l, lchValue.c, lchValue.h, lchValue.alpha);
 	}
 
 	static fromRandom() {
-		const choices = Object.entries(map);
-
-		let randomArray: any[] = [];
-		choices.forEach((item, index) => {
-			const l = parseFloat(item[0]);
-			var clone = Array(Math.round(Math.min(l, 1 - l) * 100)).fill(item);
-			randomArray.push(...clone);
-		});
-
-		const [l, c] = randomArray[~~(Math.random() * randomArray.length)];
-		return new Color(parseFloat(l), c, Math.random() * 360);
+		const [l, c] = randomMap[~~(Math.random() * randomMap.length)];
+		return new Color(l, c, Math.random() * 360);
 	}
 
 	valuesAt(...keys: string[]) {
@@ -74,7 +82,7 @@ export class Color {
 
 	toHex(data: any = {}) {
 		const rgb = formatHex({ ...this.data, ...data });
-		return rgb ? rgb : '#000';
+		return rgb ? rgb : BLACK;
 	}
 
 	transform(data: any = {}) {
@@ -83,7 +91,7 @@ export class Color {
 	}
 
 	changeBackground() {
-		toggleDarkMode(this.l > 0.5 ? 0 : 1);
+		toggleDarkMode(this.l > CONTRAST_THRESHOLD ? 0 : 1);
 	}
 
 	maxChromaFor(l: number = this.l) {
@@ -99,7 +107,7 @@ export class Color {
 		return this.transform({ l, c: this.c, h: h ? h : this.h });
 	}
 
-	hueSwatch(num: number = 11, distance: number = 30) {
+	hueSwatch(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
 		const h0 = this.h;
 		const colors: Color[] = [];
 		for (let i = 0; i < num; i++) {
@@ -109,9 +117,9 @@ export class Color {
 	}
 
 	lightnessSwatch(
-		num: number = 11,
-		minLight: number = 0.125,
-		maxLight: number = 0.98,
+		num: number = DEFAULT_SIZE,
+		minLight: number = MIN_LIGHT,
+		maxLight: number = MAX_LIGHT,
 		h: number = this.h,
 		reversed: boolean = true
 	) {
@@ -125,15 +133,15 @@ export class Color {
 		return colors;
 	}
 
-	shades(num: number = 11, minLight: number = 0.125) {
+	shades(num: number = DEFAULT_SIZE, minLight: number = MIN_LIGHT) {
 		return this.lightnessSwatch(num, minLight, this.l, this.h);
 	}
 
-	tints(num: number = 11, maxLight: number = 0.98) {
+	tints(num: number = DEFAULT_SIZE, maxLight: number = MAX_LIGHT) {
 		return this.lightnessSwatch(num, this.l, maxLight, this.h, false);
 	}
 
-	tones(num: number = 11, minChroma: number = 0) {
+	tones(num: number = DEFAULT_SIZE, minChroma: number = MIN_CHROMA) {
 		const c0 = minChroma;
 		const maxChroma = this.maxChroma;
 		const d = (maxChroma - minChroma) / (num - 1);
@@ -145,20 +153,24 @@ export class Color {
 		return colors;
 	}
 
-	complimentary(num: number = 11, maxLight: number = 0.95) {
+	complimentary(num: number = DEFAULT_SIZE, maxLight: number = MAX_LIGHT_VARY) {
 		const colors = [];
 		const n = Math.floor(num / 2);
-		const minLight = 0.7 - num / 100;
+		const minLight = MIN_LIGHT_VARY - num / 100;
 
 		colors.push(...this.lightnessSwatch(n, minLight, maxLight));
 		colors.push(...this.lightnessSwatch(num - n, minLight, maxLight, this.h + 180, false));
 		return colors;
 	}
 
-	splitComplimentary(num: number = 11, distance: number = 30, maxLight: number = 0.95) {
-		let colors = [];
+	splitComplimentary(
+		num: number = DEFAULT_SIZE,
+		distance: number = DEFAULT_DISTANCE,
+		maxLight: number = MAX_LIGHT_VARY
+	) {
+		const colors = [];
 		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
-		const minLight = 0.7 - num / 100;
+		const minLight = MIN_LIGHT_VARY - num / 100;
 
 		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h + 180, true));
 		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - distance, false));
@@ -166,34 +178,56 @@ export class Color {
 		return colors;
 	}
 
-	analogous(distance: number = 30) {
+	analogous(
+		num: number = DEFAULT_SIZE,
+		distance: number = DEFAULT_DISTANCE,
+		maxLight: number = MAX_LIGHT_VARY
+	) {
 		const colors = [];
-		colors.push(this.varyHue(this.h + distance));
-		colors.push(this.varyLight(this.l * 0.9, this.h + distance));
-		colors.push(this.varyLight(this.l * 1.1, this.h + distance));
-		colors.push(this.varyHue(this.h - distance));
-		colors.push(this.varyLight(this.l * 0.9, this.h - distance));
-		colors.push(this.varyLight(this.l * 1.1, this.h - distance));
-		colors.push(this.varyLight(this.l * 0.7));
-		colors.push(this.transform());
+		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
+		const minLight = MIN_LIGHT_VARY - num / 100;
 
+		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h, true));
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - distance, false));
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h + distance, true));
 		return colors;
 	}
 
-	tetradic(distance: number = 30) {
-		const h0 = this.h;
-		const h1 = (h0 + 2 * distance) % 360;
-		const h2 = (h0 - 2 * distance) % 360;
-		const h3 = (h0 + 180 + 2 * distance) % 360;
-		const h4 = (h0 + 180 - 2 * distance) % 360;
-		return [h1, h2, h3, h4].map((h) => this.transform({ h }));
+	triadic(
+		num: number = DEFAULT_SIZE,
+		distance: number = DEFAULT_DISTANCE,
+		maxLight: number = MAX_LIGHT_VARY
+	) {
+		const colors = [];
+		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
+		const minLight = MIN_LIGHT_VARY - num / 100;
+
+		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h + 180, true));
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - 2 * distance, false));
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h + 2 * distance, true));
+		return colors;
 	}
 
-	triadic(distance: number = 30) {
-		const h0 = this.h;
-		const h1 = (h0 + 2 * distance) % 360;
-		const h2 = (h0 - 2 * distance) % 360;
-		const h3 = (h0 + 180) % 360;
-		return [h1, h2, h3].map((h) => this.transform({ h }));
+	tetradic(
+		num: number = DEFAULT_SIZE,
+		distance: number = DEFAULT_DISTANCE,
+		maxLight: number = MAX_LIGHT_VARY
+	) {
+		const colors = [];
+		const n0 = Math.floor(num / 4);
+		const minLight = MIN_LIGHT_VARY - num / 100;
+
+		colors.push(...this.lightnessSwatch(n0, minLight, maxLight, this.h + 2 * distance, false));
+		colors.push(...this.lightnessSwatch(n0, minLight, maxLight, this.h - 2 * distance, true));
+
+		const n1 = Math.floor((num - 2 * n0) / 2);
+		colors.push(
+			...this.lightnessSwatch(n1, minLight, maxLight, this.h + 180 - 2 * distance, false)
+		);
+
+		const n2 = num - 2 * n0 - n1;
+		colors.push(...this.lightnessSwatch(n2, minLight, maxLight, this.h + 180 + 2 * distance, true));
+
+		return colors;
 	}
 }
