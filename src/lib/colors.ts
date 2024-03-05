@@ -90,20 +90,16 @@ export class Color {
 		return new Color(newData.l, newData.c, newData.h, newData.alpha);
 	}
 
-	changeBackground() {
-		toggleDarkMode(this.l > CONTRAST_THRESHOLD ? 0 : 1);
-	}
-
 	maxChromaFor(l: number = this.l) {
 		const c = map[Math.round(l * 10000) / 10000];
 		return c ? c : 0;
 	}
 
-	varyHue(h: number) {
+	_transformHue(h: number) {
 		return this.transform({ h: h % 360 });
 	}
 
-	varyLight(l: number, h: number | null = null) {
+	_transformLightness(l: number, h: number | null = null) {
 		return this.transform({ l, c: this.c, h: h ? h : this.h });
 	}
 
@@ -111,7 +107,7 @@ export class Color {
 		const h0 = this.h;
 		const colors: Color[] = [];
 		for (let i = 0; i < num; i++) {
-			colors.push(this.varyHue(h0 + i * distance));
+			colors.push(this._transformHue(h0 + i * distance));
 		}
 		return colors;
 	}
@@ -124,13 +120,17 @@ export class Color {
 		reversed: boolean = true
 	) {
 		const colors = [];
-		if (num == 1) return [this.varyHue(h)];
+		if (num == 1) return [this._transformHue(h)];
 		const d = (maxLight - minLight) / (num - 1);
 		console.log(num, d, minLight, maxLight, h, reversed);
 		for (let i = 0; i < num; i++) {
-			colors.push(this.varyLight(reversed ? maxLight - i * d : minLight + i * d, h));
+			colors.push(this._transformLightness(reversed ? maxLight - i * d : minLight + i * d, h));
 		}
 		return colors;
+	}
+
+	_lightnessVary(num: number, h: number = this.h, reversed: boolean = true) {
+		return this.lightnessSwatch(num, MIN_LIGHT_VARY - num / 100, MAX_LIGHT_VARY, h, reversed);
 	}
 
 	shades(num: number = DEFAULT_SIZE, minLight: number = MIN_LIGHT) {
@@ -153,80 +153,79 @@ export class Color {
 		return colors;
 	}
 
-	complimentary(num: number = DEFAULT_SIZE, maxLight: number = MAX_LIGHT_VARY) {
+	complimentary(num: number = DEFAULT_SIZE) {
 		const colors = [];
 		const n = Math.floor(num / 2);
-		const minLight = MIN_LIGHT_VARY - num / 100;
 
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight));
-		colors.push(...this.lightnessSwatch(num - n, minLight, maxLight, this.h + 180, false));
+		colors.push(...this._lightnessVary(n));
+		colors.push(...this._lightnessVary(num - n, this.h + 180, false));
 		return colors;
 	}
 
-	splitComplimentary(
-		num: number = DEFAULT_SIZE,
-		distance: number = DEFAULT_DISTANCE,
-		maxLight: number = MAX_LIGHT_VARY
-	) {
+	splitComplimentary(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
 		const colors = [];
 		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
-		const minLight = MIN_LIGHT_VARY - num / 100;
 
-		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h + 180, true));
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - distance, false));
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h + distance, true));
+		colors.push(...this._lightnessVary(num - 2 * n, this.h + 180, true));
+		colors.push(...this._lightnessVary(n, this.h - distance, false));
+		colors.push(...this._lightnessVary(n, this.h + distance, true));
 		return colors;
 	}
 
-	analogous(
-		num: number = DEFAULT_SIZE,
-		distance: number = DEFAULT_DISTANCE,
-		maxLight: number = MAX_LIGHT_VARY
-	) {
+	analogous(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
 		const colors = [];
 		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
-		const minLight = MIN_LIGHT_VARY - num / 100;
 
-		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h, true));
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - distance, false));
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h + distance, true));
+		colors.push(...this._lightnessVary(num - 2 * n, this.h, true));
+		colors.push(...this._lightnessVary(n, this.h - distance, false));
+		colors.push(...this._lightnessVary(n, this.h + distance, true));
 		return colors;
 	}
 
-	triadic(
-		num: number = DEFAULT_SIZE,
-		distance: number = DEFAULT_DISTANCE,
-		maxLight: number = MAX_LIGHT_VARY
-	) {
+	triadic(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
 		const colors = [];
 		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
-		const minLight = MIN_LIGHT_VARY - num / 100;
 
-		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h + 180, true));
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - 2 * distance, false));
-		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h + 2 * distance, true));
+		colors.push(...this._lightnessVary(num - 2 * n, this.h + 180, true));
+		colors.push(...this._lightnessVary(n, this.h - 2 * distance, false));
+		colors.push(...this._lightnessVary(n, this.h + 2 * distance, true));
 		return colors;
 	}
 
-	tetradic(
-		num: number = DEFAULT_SIZE,
-		distance: number = DEFAULT_DISTANCE,
-		maxLight: number = MAX_LIGHT_VARY
-	) {
+	triadicInclusive(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
+		const colors = [];
+		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
+
+		colors.push(...this._lightnessVary(num - 2 * n, this.h, true));
+		colors.push(...this._lightnessVary(n, this.h - 2 * distance, false));
+		colors.push(...this._lightnessVary(n, this.h + 2 * distance, true));
+		return colors;
+	}
+
+	tetradic(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
 		const colors = [];
 		const n0 = Math.floor(num / 4);
-		const minLight = MIN_LIGHT_VARY - num / 100;
 
-		colors.push(...this.lightnessSwatch(n0, minLight, maxLight, this.h + 2 * distance, false));
-		colors.push(...this.lightnessSwatch(n0, minLight, maxLight, this.h - 2 * distance, true));
+		colors.push(...this._lightnessVary(n0, this.h - 2 * distance, true));
+		colors.push(...this._lightnessVary(n0, this.h + 2 * distance, false));
 
 		const n1 = Math.floor((num - 2 * n0) / 2);
-		colors.push(
-			...this.lightnessSwatch(n1, minLight, maxLight, this.h + 180 - 2 * distance, false)
-		);
+		colors.push(...this._lightnessVary(n1, this.h + 180 - 2 * distance, true));
+		colors.push(...this._lightnessVary(num - 2 * n0 - n1, this.h + 180 + 2 * distance, false));
 
-		const n2 = num - 2 * n0 - n1;
-		colors.push(...this.lightnessSwatch(n2, minLight, maxLight, this.h + 180 + 2 * distance, true));
+		return colors;
+	}
+
+	tetradicInclusive(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
+		const colors = [];
+		const n0 = Math.floor(num / 4);
+
+		colors.push(...this._lightnessVary(n0, this.h - 2 * distance, true));
+		colors.push(...this._lightnessVary(n0, this.h, false));
+
+		const n1 = Math.floor((num - 2 * n0) / 2);
+		colors.push(...this._lightnessVary(n1, this.h + 180 - 2 * distance, true));
+		colors.push(...this._lightnessVary(num - 2 * n0 - n1, this.h + 180, false));
 
 		return colors;
 	}

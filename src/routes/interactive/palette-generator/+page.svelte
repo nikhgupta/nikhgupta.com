@@ -134,9 +134,23 @@
 	colors={color.triadic(numSlider, hueDistanceSlider)}
 />
 
+<h3 class="mt-4">Triadic (inclusive)</h3>
+<Palette
+	{showColor}
+	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.triadicInclusive(numSlider, hueDistanceSlider)}
+/>
+
 <h3 class="mt-4">Tetradic</h3>
 <Palette
 	{showColor}
 	className="flex mt-2 md:gap-1 mb-8"
 	colors={color.tetradic(numSlider, hueDistanceSlider)}
+/>
+
+<h3 class="mt-4">Tetradic (inclusive)</h3>
+<Palette
+	{showColor}
+	className="flex mt-2 md:gap-1 mb-8"
+	colors={color.tetradicInclusive(numSlider, hueDistanceSlider)}
 />
