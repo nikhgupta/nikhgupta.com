@@ -11,8 +11,7 @@
 	let cs = DEFAULT_COLOR.c;
 	let hs = DEFAULT_COLOR.h;
 	$: color = new Color(ls, cs, hs);
-	$: maxChroma = color.maxChroma();
-	$: csClamped = Math.min(maxChroma, cs);
+	$: csClamped = Math.min(color.maxChroma, cs);
 	$: toggleDarkMode(ls > 0.5 ? 0 : 1);
 
 	const onKeyDown = (e: KeyboardEvent) => {
@@ -49,9 +48,9 @@
 		</div>
 		<div>
 			<Label for="color-chroma" class="block mb-2"
-				>Chroma: {csClamped.toFixed(4)}, Max: {maxChroma.toFixed(4)}</Label
+				>Chroma: {csClamped.toFixed(4)}, Max: {color.maxChroma.toFixed(4)}</Label
 			>
-			<Range id="color-chroma" min="0" max={maxChroma} bind:value={cs} step={0.0001} />
+			<Range id="color-chroma" min="0" max={color.maxChroma} bind:value={cs} step={0.0001} />
 		</div>
 		<div>
 			<Label for="color-hue" class="block mb-2">Hue: {hs.toFixed(2)}</Label>
