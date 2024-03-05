@@ -82,44 +82,68 @@ export class Color {
 		return c ? c : 0;
 	}
 
-	swatch(distance: number = 30, num: number = 11) {
+	varyHue(h: number) {
+		return this.toHex({ h: h % 360 });
+	}
+
+	varyLight(l: number) {
+		const lc = Math.round(l * 10000) / 10000;
+		const chroma = map[lc] < this.c ? map[lc] : this.c;
+		return this.toHex({ l, c: chroma });
+	}
+
+	hueSwatch(distance: number = 30, num: number = 11) {
 		const h0 = this.h;
 		const colors = [];
 		for (let i = 0; i < num; i++) {
-			const h = (h0 + i * distance) % 360;
-			const color = this.toHex({ h });
-			colors.push(color);
+			colors.push(this.varyHue(h0 + i * distance));
 		}
 		return colors;
 	}
 
-	shades(num: number = 11, minLight: number = 0.125, maxLight: number = 0.98) {
+	lightnessSwatch(num: number = 11, minLight: number = 0.125, maxLight: number = 0.98) {
 		const l0 = minLight;
 		const d = (maxLight - minLight) / (num - 1);
-		const maxChroma = this.c;
 
 		const colors = [];
 		for (let i = 0; i < num; i++) {
-			const l = Math.round((l0 + i * d) * 10000) / 10000;
-			let chroma = map[l] < maxChroma ? map[l] : maxChroma;
-			const color = this.toHex({ l, c: chroma });
-			colors.push(color);
+			colors.push(this.varyLight(l0 + i * d));
+		}
+		return colors;
+	}
+
+	shades(num: number = 11, minLight: number = 0.125) {
+		return this.lightnessSwatch(num, minLight, this.l);
+	}
+
+	tints(num: number = 11, maxLight: number = 0.98) {
+		return this.lightnessSwatch(num, this.l, maxLight);
+	}
+
+	tones(num: number = 11, minChroma: number = 0) {
+		const c0 = minChroma;
+		const maxChroma = this.maxChroma();
+		const d = (maxChroma - minChroma) / (num - 1);
+
+		const colors = [];
+		for (let i = 0; i < num; i++) {
+			colors.push(this.toHex({ c: c0 + i * d }));
 		}
 		return colors;
 	}
 
 	complimentary() {
 		const colors = [];
-		colors.push(this.toHex({ l: this.l * 0.9 }));
+		// colors.push(this.toHex({ l: this.l * 0.9 }));
 		colors.push(this.toHex());
-		colors.push(this.toHex({ l: this.l * 1.1 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.7 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.8 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.9 }));
+		// colors.push(this.toHex({ l: this.l * 1.1 }));
+		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.7 }));
+		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.8 }));
+		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.9 }));
 		colors.push(this.toHex({ h: (this.h + 180) % 360 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.1 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.2 }));
-		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.3 }));
+		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.1 }));
+		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.2 }));
+		// colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.3 }));
 
 		return colors;
 	}

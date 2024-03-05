@@ -4,7 +4,7 @@
 	import Palette from './palette.svelte';
 
 	let numSlider = 12;
-	let hueDistanceSlider = 360 / numSlider;
+	$: hueDistanceSlider = 360 / numSlider;
 
 	let showColor = true;
 	let ls = DEFAULT_COLOR.l;
@@ -78,20 +78,38 @@
 	<div class="mb-6 col-span-5">
 		<Label>Palette Size: {numSlider} colors</Label>
 		<Range id="num-colors" min="1" max="36" bind:value={numSlider} step={1} />
-		<Label>Distance: {hueDistanceSlider} (between hues)</Label>
+		<Label>Distance: {hueDistanceSlider.toFixed(2)} (between hues)</Label>
 		<Range id="distance-hue" min="0" max="180" bind:value={hueDistanceSlider} step={1} />
 	</div>
 </div>
 
 <p>
-	Press <code>space</code> to randomize base color, <code>x</code> to reset base color,
+	You can press <code>space</code> to randomize base color, <code>x</code> to reset base color,
 	<code>c</code> to toggle color hex values, and <code>d</code> to toggle dark mode.
 </p>
 
-<h3 class="mt-4">Swatch</h3>
+<h3 class="mt-4">Swatch (hue)</h3>
 <Palette
 	baseColor={color}
-	colors={color.swatch(hueDistanceSlider, numSlider)}
+	colors={color.hueSwatch(hueDistanceSlider, numSlider)}
+	rounded={false}
+	showColor={showColor && numSlider < 13}
+	className="flex mt-2 gap-1 mb-8"
+/>
+
+<h3 class="mt-4">Swatch (lightness)</h3>
+<Palette
+	baseColor={color}
+	colors={color.lightnessSwatch(numSlider)}
+	rounded={false}
+	showColor={showColor && numSlider < 13}
+	className="flex mt-2 gap-1 mb-8"
+/>
+
+<h3 class="mt-4">Tints</h3>
+<Palette
+	baseColor={color}
+	colors={color.tints(numSlider)}
 	rounded={false}
 	showColor={showColor && numSlider < 13}
 	className="flex mt-2 gap-1 mb-8"
@@ -101,6 +119,15 @@
 <Palette
 	baseColor={color}
 	colors={color.shades(numSlider)}
+	rounded={false}
+	showColor={showColor && numSlider < 13}
+	className="flex mt-2 gap-1 mb-8"
+/>
+
+<h3 class="mt-4">Tones</h3>
+<Palette
+	baseColor={color}
+	colors={color.tones(numSlider)}
 	rounded={false}
 	showColor={showColor && numSlider < 13}
 	className="flex mt-2 gap-1 mb-8"

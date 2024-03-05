@@ -84,3 +84,7 @@ h5,
 h6 {
 	@apply text-base;
 }
+
+p code {
+	@apply text-red-400 font-bold;
+}
