@@ -69,7 +69,8 @@ export class Color {
 	}
 
 	toHex(data: any = {}) {
-		return formatHex({ ...this.data, ...data });
+		const rgb = formatHex({ ...this.data, ...data });
+		return rgb ? rgb : '#000';
 	}
 
 	changeBackground() {
@@ -108,9 +109,19 @@ export class Color {
 	}
 
 	complimentary() {
-		const h0 = this.h;
-		const h1 = (h0 + 180) % 360;
-		return [h0, h1].map((h) => this.toHex({ h }));
+		const colors = [];
+		colors.push(this.toHex({ l: this.l * 0.9 }));
+		colors.push(this.toHex());
+		colors.push(this.toHex({ l: this.l * 1.1 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.7 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.8 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 0.9 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.1 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.2 }));
+		colors.push(this.toHex({ h: (this.h + 180) % 360, l: this.l * 1.3 }));
+
+		return colors;
 	}
 
 	analogous(distance: number = 30) {
