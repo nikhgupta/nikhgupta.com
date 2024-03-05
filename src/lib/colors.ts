@@ -90,10 +90,11 @@ export class Color {
 		const hc = h ? h : this.h;
 		const lc = Math.round(l * 10000) / 10000;
 		const chroma = map[lc] < this.c ? map[lc] : this.c;
+		// console.log('chroma:', lc, chroma, map[lc], this.c);
 		return this.toHex({ l, c: chroma, h: hc });
 	}
 
-	hueSwatch(distance: number = 30, num: number = 11) {
+	hueSwatch(num: number = 11, distance: number = 30) {
 		const h0 = this.h;
 		const colors = [];
 		for (let i = 0; i < num; i++) {
@@ -102,23 +103,29 @@ export class Color {
 		return colors;
 	}
 
-	lightnessSwatch(num: number = 11, minLight: number = 0.125, maxLight: number = 0.98) {
-		const l0 = minLight;
-		const d = (maxLight - minLight) / (num - 1);
-
+	lightnessSwatch(
+		num: number = 11,
+		minLight: number = 0.125,
+		maxLight: number = 0.98,
+		h: number = this.h,
+		reversed: boolean = true
+	) {
 		const colors = [];
+		if (num == 1) return [this.varyHue(h)];
+		const d = (maxLight - minLight) / (num - 1);
+		console.log(num, d, minLight, maxLight, h, reversed);
 		for (let i = 0; i < num; i++) {
-			colors.push(this.varyLight(l0 + i * d));
+			colors.push(this.varyLight(reversed ? maxLight - i * d : minLight + i * d, h));
 		}
 		return colors;
 	}
 
 	shades(num: number = 11, minLight: number = 0.125) {
-		return this.lightnessSwatch(num, minLight, this.l);
+		return this.lightnessSwatch(num, minLight, this.l, this.h);
 	}
 
 	tints(num: number = 11, maxLight: number = 0.98) {
-		return this.lightnessSwatch(num, this.l, maxLight);
+		return this.lightnessSwatch(num, this.l, maxLight, this.h, false);
 	}
 
 	tones(num: number = 11, minChroma: number = 0) {
@@ -128,49 +135,42 @@ export class Color {
 
 		const colors = [];
 		for (let i = 0; i < num; i++) {
-			colors.push(this.toHex({ c: c0 + i * d }));
+			colors.push(this.toHex({ c: c0 + (num - i) * d }));
 		}
 		return colors;
 	}
 
-	complimentary() {
+	complimentary(num: number = 11, maxLight: number = 0.95) {
 		const colors = [];
-		colors.push(this.varyLight(this.l * 0.9));
-		colors.push(this.toHex());
-		colors.push(this.varyLight(this.l * 1.1));
-		colors.push(this.varyLight(this.l * 0.9, this.h + 180));
-		colors.push(this.varyLight(this.l * 0.95, this.h + 180));
-		colors.push(this.varyHue(this.h + 180));
-		colors.push(this.varyLight(this.l * 1.05, this.h + 180));
-		colors.push(this.varyLight(this.l * 1.1, this.h + 180));
+		const n = Math.floor(num / 2);
+		const minLight = 0.7 - num / 100;
 
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight));
+		colors.push(...this.lightnessSwatch(num - n, minLight, maxLight, this.h + 180, false));
 		return colors;
 	}
 
-	splitComplimentary(distance: number = 30) {
-		const colors = [];
-		colors.push(this.varyLight(this.l * 0.7, this.h + 180));
-		colors.push(this.varyHue(this.h + 180));
-		colors.push(this.varyHue(this.h + distance));
-		colors.push(this.varyLight(this.l * 0.9, this.h + distance));
-		colors.push(this.varyLight(this.l * 1.1, this.h + distance));
-		colors.push(this.varyLight(this.l * 1.1, this.h - distance));
-		colors.push(this.varyHue(this.h - distance));
-		colors.push(this.varyLight(this.l * 0.9, this.h - distance));
+	splitComplimentary(num: number = 11, distance: number = 30, maxLight: number = 0.95) {
+		let colors: string[] = [];
+		const n = num % 3 == 2 ? Math.ceil(num / 3) : Math.floor(num / 3);
+		const minLight = 0.7 - num / 100;
 
+		colors.push(...this.lightnessSwatch(num - 2 * n, minLight, maxLight, this.h + 180, true));
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h - distance, false));
+		colors.push(...this.lightnessSwatch(n, minLight, maxLight, this.h + distance, true));
 		return colors;
 	}
 
 	analogous(distance: number = 30) {
 		const colors = [];
-		colors.push(this.varyLight(this.l * 1.1, this.h + distance));
-		colors.push(this.varyLight(this.l * 0.9, this.h + distance));
 		colors.push(this.varyHue(this.h + distance));
-		colors.push(this.toHex());
-		colors.push(this.varyLight(this.l * 0.7));
-		colors.push(this.varyLight(this.l * 0.9, this.h - distance));
+		colors.push(this.varyLight(this.l * 0.9, this.h + distance));
+		colors.push(this.varyLight(this.l * 1.1, this.h + distance));
 		colors.push(this.varyHue(this.h - distance));
+		colors.push(this.varyLight(this.l * 0.9, this.h - distance));
 		colors.push(this.varyLight(this.l * 1.1, this.h - distance));
+		colors.push(this.varyLight(this.l * 0.7));
+		colors.push(this.toHex());
 
 		return colors;
 	}

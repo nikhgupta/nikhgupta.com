@@ -11,7 +11,7 @@
 <div class={className}>
 	{#each colors as c}
 		<div
-			class="w-full h-16 {rounded ? 'rounded-lg' : ''} flex items-center justify-center"
+			class="w-full h-16 {rounded ? 'md:rounded-lg' : ''} flex items-center justify-center"
 			style="background-color: {c}; color: {baseColor.contrastColor}"
 		>
 			{#if showColor}

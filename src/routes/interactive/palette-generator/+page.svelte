@@ -3,7 +3,7 @@
 	import { Range, Label, Input, Helper } from 'flowbite-svelte';
 	import Palette from './palette.svelte';
 
-	let numSlider = 12;
+	let numSlider = 3;
 	$: hueDistanceSlider = 360 / numSlider;
 
 	let showColor = false;
@@ -41,8 +41,8 @@
 
 <h2 class="post-title">Generating Color Schemes using OKLCH colorspace</h2>
 
-<div class="grid grid-cols-9 gap-4">
-	<div class="grid grid-cols-3 gap-4 col-span-9 mb-4">
+<div class="grid grid-cols-3 md:grid-cols-9 gap-4">
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-3 md:col-span-9 mb-4">
 		<div>
 			<Label for="color-lightness" class="block mb-2">Lightness: {ls.toFixed(4)}</Label>
 			<Range id="color-lightness" min="0" max="1" bind:value={ls} step={0.0001} />
@@ -58,10 +58,10 @@
 			<Range id="color-hue" min="0" max="360" bind:value={hs} step={0.01} />
 		</div>
 	</div>
-	<div class="mb-6 col-span-2">
-		<div class="w-full h-full rounded-lg" style="background-color: {color.toHex()}"></div>
+	<div class="mb-6 col-span-3">
+		<div class="w-full h-16 md:h-full rounded-lg" style="background-color: {color.toHex()}"></div>
 	</div>
-	<div class="mb-3 col-span-2">
+	<div class="mb-3 col-span-3">
 		<Label for="hex-input" class="block mb-2">Paste a color in hex format:</Label>
 		<Input
 			id="hex-input"
@@ -75,7 +75,7 @@
 			{color.h.toFixed(2)})
 		</Helper>
 	</div>
-	<div class="mb-6 col-span-5">
+	<div class="mb-6 col-span-3">
 		<Label>Palette Size: {numSlider} colors</Label>
 		<Range id="num-colors" min="1" max="36" bind:value={numSlider} step={1} />
 		<Label>Distance: {hueDistanceSlider.toFixed(2)} (between hues)</Label>
@@ -91,10 +91,10 @@
 <h3 class="mt-4">Swatch (hue)</h3>
 <Palette
 	baseColor={color}
-	colors={color.hueSwatch(hueDistanceSlider, numSlider)}
+	colors={color.hueSwatch(numSlider, hueDistanceSlider)}
 	rounded={false}
 	showColor={showColor && numSlider < 13}
-	className="flex mt-2 gap-1 mb-8"
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Swatch (lightness)</h3>
@@ -103,16 +103,7 @@
 	colors={color.lightnessSwatch(numSlider)}
 	rounded={false}
 	showColor={showColor && numSlider < 13}
-	className="flex mt-2 gap-1 mb-8"
-/>
-
-<h3 class="mt-4">Tints</h3>
-<Palette
-	baseColor={color}
-	colors={color.tints(numSlider)}
-	rounded={false}
-	showColor={showColor && numSlider < 13}
-	className="flex mt-2 gap-1 mb-8"
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Shades</h3>
@@ -121,7 +112,7 @@
 	colors={color.shades(numSlider)}
 	rounded={false}
 	showColor={showColor && numSlider < 13}
-	className="flex mt-2 gap-1 mb-8"
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Tones</h3>
@@ -130,17 +121,34 @@
 	colors={color.tones(numSlider)}
 	rounded={false}
 	showColor={showColor && numSlider < 13}
-	className="flex mt-2 gap-1 mb-8"
+	className="flex mt-2 md:gap-1 mb-8"
+/>
+
+<h3 class="mt-4">Tints</h3>
+<Palette
+	baseColor={color}
+	colors={color.tints(numSlider)}
+	rounded={false}
+	showColor={showColor && numSlider < 13}
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Complimentary</h3>
-<Palette baseColor={color} colors={color.complimentary()} showColor={showColor && numSlider < 13} />
+<Palette
+	baseColor={color}
+	colors={color.complimentary(numSlider)}
+	rounded={false}
+	showColor={showColor && numSlider < 13}
+	className="flex mt-2 md:gap-1 mb-8"
+/>
 
 <h3 class="mt-4">Split Complimentary</h3>
 <Palette
 	baseColor={color}
-	colors={color.splitComplimentary(hueDistanceSlider)}
+	colors={color.splitComplimentary(numSlider, hueDistanceSlider)}
+	rounded={false}
 	showColor={showColor && numSlider < 13}
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Analogous</h3>
@@ -148,6 +156,7 @@
 	baseColor={color}
 	colors={color.analogous(hueDistanceSlider)}
 	showColor={showColor && numSlider < 13}
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Triadic</h3>
@@ -155,6 +164,7 @@
 	baseColor={color}
 	colors={color.triadic(hueDistanceSlider)}
 	showColor={showColor && numSlider < 13}
+	className="flex mt-2 md:gap-1 mb-8"
 />
 
 <h3 class="mt-4">Tetradic</h3>
@@ -162,4 +172,5 @@
 	baseColor={color}
 	colors={color.tetradic(hueDistanceSlider)}
 	showColor={showColor && numSlider < 13}
+	className="flex mt-2 md:gap-1 mb-8"
 />
