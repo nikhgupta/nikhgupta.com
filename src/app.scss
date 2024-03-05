@@ -85,6 +85,7 @@ h6 {
 	@apply text-base;
 }
 
-p code {
+p code,
+li code {
 	@apply text-red-400 font-bold;
 }

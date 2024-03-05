@@ -122,7 +122,6 @@ export class Color {
 		const colors = [];
 		if (num == 1) return [this._transformHue(h)];
 		const d = (maxLight - minLight) / (num - 1);
-		console.log(num, d, minLight, maxLight, h, reversed);
 		for (let i = 0; i < num; i++) {
 			colors.push(this._transformLightness(reversed ? maxLight - i * d : minLight + i * d, h));
 		}
@@ -148,7 +147,7 @@ export class Color {
 
 		const colors = [];
 		for (let i = 0; i < num; i++) {
-			colors.push(this.transform({ c: c0 + (num - i) * d }));
+			colors.push(this.transform({ c: c0 + (num - i - 1) * d }));
 		}
 		return colors;
 	}

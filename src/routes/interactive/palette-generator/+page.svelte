@@ -4,9 +4,9 @@
 	import Palette from './palette.svelte';
 
 	let numSlider = 12;
-	$: hueDistanceSlider = 360 / numSlider;
-
 	let showColor = false;
+	$: hueDistanceSlider = Math.min(30, 360 / numSlider);
+
 	let ls = DEFAULT_COLOR.l;
 	let cs = DEFAULT_COLOR.c;
 	let hs = DEFAULT_COLOR.h;
@@ -15,18 +15,26 @@
 	$: toggleDarkMode(ls > 0.5 ? 0 : 1);
 
 	const onKeyDown = (e: KeyboardEvent) => {
+		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return;
+
+		const recognized = ['Space', 'KeyX', 'KeyD', 'KeyM', 'Equal', 'Minus'];
+		if (!recognized.includes(e.code)) return;
+
+		e.preventDefault();
 		if (e.code === 'Space') {
 			[ls, cs, hs] = Color.fromRandom().valuesAt('l', 'c', 'h');
-			e.preventDefault();
 		} else if (e.code === 'KeyX') {
 			[ls, cs, hs] = Color.fromRgb('#fab').valuesAt('l', 'c', 'h');
-			e.preventDefault();
+			numSlider = 4;
+			showColor = false;
 		} else if (e.code === 'KeyD') {
 			toggleDarkMode(-1);
-			e.preventDefault();
 		} else if (e.code === 'KeyM') {
 			showColor = !showColor;
-			e.preventDefault();
+		} else if (e.code === 'Equal') {
+			numSlider = Math.min(36, numSlider + 1);
+		} else if (e.code === 'Minus') {
+			numSlider = Math.max(2, numSlider - 1);
 		}
 	};
 
@@ -76,15 +84,16 @@
 	</div>
 	<div class="mb-6 col-span-3">
 		<Label>Palette Size: {numSlider} colors</Label>
-		<Range id="num-colors" min="1" max="36" bind:value={numSlider} step={1} />
+		<Range id="num-colors" min="2" max="36" bind:value={numSlider} step={1} />
 		<Label>Distance: {hueDistanceSlider.toFixed(2)} (between hues)</Label>
-		<Range id="distance-hue" min="0" max="180" bind:value={hueDistanceSlider} step={1} />
+		<Range id="distance-hue" min="0" max="90" bind:value={hueDistanceSlider} step={1} />
 	</div>
 </div>
 
 <p>
-	You can press <code>space</code> to randomize base color, <code>x</code> to reset base color,
-	<code>m</code> to toggle color hex values, and <code>d</code> to toggle dark mode.
+	Press <code>-</code> to decrease or <code>=</code> to increase palette size. Press <code>m</code>
+	to toggle color hex values, and <code>d</code> to toggle dark mode. Press <code>space</code> to
+	randomize base color and <code>x</code> to reset UI.
 </p>
 
 <h3 class="mt-4">Swatch (hue)</h3>
@@ -113,44 +122,48 @@
 <h3 class="mt-4">Complimentary</h3>
 <Palette {showColor} className="flex mt-2 md:gap-1 mb-8" colors={color.complimentary(numSlider)} />
 
-<h3 class="mt-4">Analogous</h3>
-<Palette
-	{showColor}
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.analogous(numSlider, hueDistanceSlider)}
-/>
+{#if numSlider > 2}
+	<h3 class="mt-4">Analogous</h3>
+	<Palette
+		{showColor}
+		className="flex mt-2 md:gap-1 mb-8"
+		colors={color.analogous(numSlider, hueDistanceSlider)}
+	/>
 
-<h3 class="mt-4">Split Complimentary</h3>
-<Palette
-	{showColor}
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.splitComplimentary(numSlider, hueDistanceSlider)}
-/>
+	<h3 class="mt-4">Split Complimentary</h3>
+	<Palette
+		{showColor}
+		className="flex mt-2 md:gap-1 mb-8"
+		colors={color.splitComplimentary(numSlider, hueDistanceSlider)}
+	/>
 
-<h3 class="mt-4">Triadic</h3>
-<Palette
-	{showColor}
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.triadic(numSlider, hueDistanceSlider)}
-/>
+	<h3 class="mt-4">Triadic</h3>
+	<Palette
+		{showColor}
+		className="flex mt-2 md:gap-1 mb-8"
+		colors={color.triadic(numSlider, hueDistanceSlider)}
+	/>
 
-<h3 class="mt-4">Triadic (inclusive)</h3>
-<Palette
-	{showColor}
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.triadicInclusive(numSlider, hueDistanceSlider)}
-/>
+	<h3 class="mt-4">Triadic (inclusive)</h3>
+	<Palette
+		{showColor}
+		className="flex mt-2 md:gap-1 mb-8"
+		colors={color.triadicInclusive(numSlider, hueDistanceSlider)}
+	/>
+{/if}
 
-<h3 class="mt-4">Tetradic</h3>
-<Palette
-	{showColor}
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.tetradic(numSlider, hueDistanceSlider)}
-/>
+{#if numSlider > 3}
+	<h3 class="mt-4">Tetradic</h3>
+	<Palette
+		{showColor}
+		className="flex mt-2 md:gap-1 mb-8"
+		colors={color.tetradic(numSlider, hueDistanceSlider)}
+	/>
 
-<h3 class="mt-4">Tetradic (inclusive)</h3>
-<Palette
-	{showColor}
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.tetradicInclusive(numSlider, hueDistanceSlider)}
-/>
+	<h3 class="mt-4">Tetradic (inclusive)</h3>
+	<Palette
+		{showColor}
+		className="flex mt-2 md:gap-1 mb-8"
+		colors={color.tetradicInclusive(numSlider, hueDistanceSlider)}
+	/>
+{/if}
