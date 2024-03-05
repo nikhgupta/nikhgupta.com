@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let hue: number;
 	export let chroma: number = 0.04;
-	import mappings from './mapping.json';
+	import mappings from './oklch-color-mapping.json';
 	const map: Record<number, number> = mappings;
 	const lr = Array.from({ length: 10000 }, (x, i) => i / 10000);
 </script>
