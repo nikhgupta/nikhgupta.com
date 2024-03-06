@@ -53,6 +53,8 @@
 		<div class={classNameZoomed}>
 			{#each colors as c}
 				<div
+					role="button"
+					tabindex="0"
 					class="w-full {zoomed ? 'h-full' : 'h-16'} {$baseColor.toHex() === c.toHex()
 						? 'rounded-xl'
 						: ''} flex items-center justify-center"

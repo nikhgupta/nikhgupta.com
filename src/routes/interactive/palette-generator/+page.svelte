@@ -221,12 +221,12 @@
 
 <h2>Todos</h2>
 <ul class="list-disc list-inside mt-2">
-	<li>Single click on a color to copy it.</li>
-	<li>Double click on a color to set it as base color.</li>
-	<li>Bug in input for hex color - user can not type a hex color.</li>
-	<li>Random color should also vary in chroma instead of being fixed at max chroma.</li>
 	<li>Allow sharing of color-palettes by linking to a permalink.</li>
 	<li>Allow exporting color palettes (and/or currently zoomed one).</li>
+	<li>Double click on a color to set it as base color.</li>
+	<li><del>Single click on a color to copy it.</del></li>
+	<li><del>Bug in input for hex color - user can not type a hex color.</del></li>
+	<li><del>Random color should also vary in chroma instead of being fixed at max chroma.</del></li>
 	<li><del>Highlight base color in all palettes.</del></li>
 	<li>
 		<del>
