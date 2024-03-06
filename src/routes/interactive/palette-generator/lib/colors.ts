@@ -32,15 +32,14 @@ const lch = useMode(modeOklch);
 
 export const toggleDarkMode = (mode: number = -1) => {
 	if (browser) {
-		const html = document.getElementsByTagName('html')[0];
+		const html = document.documentElement;
+		html.classList.add('app-ui');
+
 		if (mode == -1) mode = html.classList.contains('dark') ? 0 : 1;
-		const body = document.getElementsByTagName('body')[0];
 		if (mode === 1) {
 			html.classList.add('dark');
-			body.style.backgroundColor = BLACK;
 		} else {
 			html.classList.remove('dark');
-			body.style.backgroundColor = WHITE;
 		}
 	}
 };

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import mappings from './oklch-color-mapping.json';
+	import mappings from '../palette-generator/lib/oklch-color-mapping.json';
 	const map: Record<number, number> = mappings;
 
 	import { Range, Label } from 'flowbite-svelte';

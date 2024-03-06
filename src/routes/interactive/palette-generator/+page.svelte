@@ -1,13 +1,17 @@
 <script lang="ts">
 	import Notes from './components/notes.svelte';
 	import Palette from './components/palette.svelte';
+	import { onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
+
 	import { baseColor, showColor, zoomedPalette } from './lib/store';
 	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './lib/colors';
 
-	import { Range, Label, Input, Helper } from 'flowbite-svelte';
+	import { Range, Label, Input, Helper, TableBody } from 'flowbite-svelte';
 	import Drawer from './components/drawer.svelte';
 
 	let numSlider = 12;
+	let hideHelp = true;
 	let color = Color.default();
 	$: hueDistanceSlider = Math.min(30, 360 / numSlider);
 
@@ -59,7 +63,12 @@
 		if (c) [ls, cs, hs] = c.valuesAt('l', 'c', 'h');
 	};
 
-	let hideHelp = true;
+	onDestroy(() => {
+		if (browser) {
+			const html = document.documentElement;
+			html.classList.remove('app-ui');
+		}
+	});
 </script>
 
 <h2 class="post-title">Generating Color Schemes using OKLCH colorspace</h2>
