@@ -5,7 +5,7 @@
 	import { Range, Label } from 'flowbite-svelte';
 	import PaletteHue from './paletteHue.svelte';
 	import PaletteLightness from './paletteLightness.svelte';
-	import CodeDisplay from '../../codeDisplay.svelte';
+	import CodeDisplay from '$lib/components/codeDisplay.svelte';
 
 	export let data;
 	let lightnessSlider = 0.7;

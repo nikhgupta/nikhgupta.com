@@ -26,8 +26,9 @@
 		improving individual productivity, building online communities, or in photography niche.
 	</p>
 
-	<p class="text-xl">Currently:</p>
+	<p class="text-xl">Currently, I am:</p>
 	<ul class="list-disc list-inside">
+		<li>looking for a job in a startup that fosters culture and open-communication.</li>
 		<li>integrating Generative AI in quantitative analysis and trading.</li>
 		<li>
 			exploring Color Theory, specifically
