@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { copy } from 'svelte-copy';
+	import { toast } from '@zerodevx/svelte-toast';
+
 	import type { Color } from './colors';
 	import { zoomedPalette, baseColor, showColor } from './store';
 
@@ -54,6 +57,8 @@
 						? 'rounded-xl'
 						: ''} flex items-center justify-center"
 					style="background-color: {c.toHex()}"
+					use:copy={c.toHex()}
+					on:svelte-copy={(e) => toast.push(`Copied ${e.detail} to clipboard!`)}
 				>
 					{#if $showColor}
 						<svg viewBox="0 0 80 18" style="max-width: 80px; fill: {c.contrastColor}">

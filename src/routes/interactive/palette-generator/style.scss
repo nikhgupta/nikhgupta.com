@@ -9,3 +9,17 @@
   top: 0;
   left: 0;
 }
+
+.toast-wrap {
+  display: contents;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+  --toastBackground: #abcdef;
+  --toastColor: #123456;
+  --toastContainerTop: auto;
+  --toastContainerBottom: 1.5rem;
+}
