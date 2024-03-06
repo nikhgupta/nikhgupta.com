@@ -65,7 +65,7 @@
 			{#each colors as c}
 				<button
 					class="w-full {zoomed ? 'h-full' : 'h-16'} {$baseColor.toHex() === c.toHex()
-						? 'rounded-xl'
+						? 'rounded-lg md:rounded-xl'
 						: ''} flex items-center justify-center"
 					style="background-color: {c.toHex()}"
 					on:click={(e) => copyColor(c)}

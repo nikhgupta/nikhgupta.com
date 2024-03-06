@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './colors';
-	import { Range, Label, Input, Helper } from 'flowbite-svelte';
 	import Palette from './palette.svelte';
 	import { baseColor, showColor, zoomedPalette } from './store';
+	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './colors';
+
+	import { Range, Label, Input, Helper } from 'flowbite-svelte';
+	import { Drawer, Button, CloseButton } from 'flowbite-svelte';
+	import { InfoCircleSolid, ArrowRightOutline } from 'flowbite-svelte-icons';
 
 	let numSlider = 12;
 	let color = Color.default();
@@ -22,7 +25,7 @@
 	const onKeyDown = (e: KeyboardEvent) => {
 		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return;
 
-		const recognized = ['Space', 'KeyX', 'KeyD', 'KeyM', 'Equal', 'Minus'];
+		const recognized = ['Space', 'KeyX', 'KeyD', 'KeyM', 'Equal', 'Minus', 'Slash'];
 		if (!recognized.includes(e.code)) return;
 
 		e.preventDefault();
@@ -41,6 +44,8 @@
 			numSlider = Math.min(36, numSlider + 1);
 		} else if (e.code === 'Minus') {
 			numSlider = Math.max(2, numSlider - 1);
+		} else if (e.code === 'Slash') {
+			hideHelp = !hideHelp;
 		}
 	};
 
@@ -53,9 +58,12 @@
 		const c = Color.fromRgb((e.target as HTMLInputElement).value || color.toHex(), false);
 		if (c) [ls, cs, hs] = c.valuesAt('l', 'c', 'h');
 	};
-</script>
 
-<svelte:window on:keydown={onKeyDown} />
+	import { sineIn } from 'svelte/easing';
+
+	let hideHelp = false;
+	let transitionParamsRight = { x: 320, duration: 200, easing: sineIn };
+</script>
 
 <h2 class="post-title">Generating Color Schemes using OKLCH colorspace</h2>
 
@@ -139,22 +147,7 @@
 </div>
 
 <p>
-	Press <code>-</code> to decrease or <code>=</code> to increase palette size.<br />Press
-	<code>m</code>
-	to toggle color hex values, and <code>d</code> to toggle dark mode. Press <code>space</code> to
-	randomize base color and <code>x</code> to reset UI.<br />
-	{#if !$zoomedPalette}
-		You can expand a palette to only focus on that palette when generating colors. Base color is
-		marked with rounded edges where available.<br />
-		{#if fallback}<strong>
-				Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
-				colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors
-				that are of high/low intensity to ensure a perceptually uniform color space. Read more about
-				how this works in the <a href="/interactive/uniform-colors-oklch"
-					>exploring OKLCH color space</a
-				> page.
-			</strong>{/if}
-	{/if}
+	Press <code>/</code> (slash) to view helpful tips and keyboard shortcuts.
 </p>
 
 <Palette
@@ -234,3 +227,49 @@
 		</del>
 	</li>
 </ul>
+
+<Drawer
+	placement="right"
+	transitionType="fly"
+	transitionParams={transitionParamsRight}
+	bind:hidden={hideHelp}
+	backdrop={true}
+>
+	<div class="flex items-center">
+		<h5
+			id="drawer-label"
+			class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"
+		>
+			<InfoCircleSolid class="w-4 h-4 me-2.5" />Help / Usage
+		</h5>
+		<CloseButton on:click={() => (hideHelp = true)} class="mb-4 dark:text-white" />
+	</div>
+
+	<h4 class="mb-2 mt-8 text-base">Keyboard Shortcuts</h4>
+	<ul class="list-disc list-inside mb-6 text-sm text-gray-500 dark:text-gray-400">
+		<li>Press <code>-</code> to decrease palette size.</li>
+		<li>Press <code>=</code> to increase palette size.</li>
+		<li>Press <code>m</code> to toggle color hex values.</li>
+		<li>Press <code>d</code> to toggle dark mode.</li>
+		<li>Press <code>space</code> to randomize base color.</li>
+		<li>Press <code>x</code> to reset UI.</li>
+	</ul>
+
+	<h4 class="mb-2 mt-8 text-base">Helpful Tips</h4>
+	<ul class="list-disc list-inside mb-6 text-sm text-gray-500 dark:text-gray-400">
+		<li>Base color is marked with rounded edges where available.</li>
+		<li>You can expand a palette to only focus on that palette when generating colors.</li>
+	</ul>
+	{#if !$zoomedPalette}
+		{#if fallback}<strong>
+				Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
+				colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors
+				that are of high/low intensity to ensure a perceptually uniform color space. Read more about
+				how this works in the <a href="/interactive/uniform-colors-oklch"
+					>exploring OKLCH color space</a
+				> page.
+			</strong>{/if}
+	{/if}
+</Drawer>
+
+<svelte:window on:keydown={onKeyDown} />
