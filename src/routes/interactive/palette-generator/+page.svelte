@@ -60,43 +60,6 @@
 <h2 class="post-title">Generating Color Schemes using OKLCH colorspace</h2>
 
 <div class="grid grid-cols-3 md:grid-cols-9 gap-4">
-	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-3 md:col-span-9 mb-4">
-		<div>
-			<Label for="color-lightness" class="block mb-2">Lightness: {ls.toFixed(4)}</Label>
-			<Range
-				id="color-lightness"
-				min="0"
-				max="1"
-				bind:value={ls}
-				step={0.0001}
-				on:change={colorSliderChanged}
-			/>
-		</div>
-		<div>
-			<Label for="color-chroma" class="block mb-2"
-				>Chroma: {csClamped.toFixed(4)}, Max: {color.maxChroma.toFixed(4)}</Label
-			>
-			<Range
-				id="color-chroma"
-				min="0"
-				max={color.maxChroma}
-				bind:value={cs}
-				step={0.0001}
-				on:change={colorSliderChanged}
-			/>
-		</div>
-		<div>
-			<Label for="color-hue" class="block mb-2">Hue: {hs.toFixed(2)}</Label>
-			<Range
-				id="color-hue"
-				min="0"
-				max="360"
-				bind:value={hs}
-				step={0.01}
-				on:change={colorSliderChanged}
-			/>
-		</div>
-	</div>
 	<div class="mb-6 col-span-3 flex">
 		{#if fallback}
 			<div
@@ -136,6 +99,43 @@
 		<Label>Distance: {hueDistanceSlider.toFixed(2)} (between hues)</Label>
 		<Range id="distance-hue" min="0" max="90" bind:value={hueDistanceSlider} step={1} />
 	</div>
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-3 md:col-span-9 mb-4">
+		<div>
+			<Label for="color-lightness" class="block mb-2">Lightness: {ls.toFixed(4)}</Label>
+			<Range
+				id="color-lightness"
+				min="0"
+				max="1"
+				bind:value={ls}
+				step={0.0001}
+				on:change={colorSliderChanged}
+			/>
+		</div>
+		<div>
+			<Label for="color-chroma" class="block mb-2"
+				>Chroma: {csClamped.toFixed(4)}, Max: {color.maxChroma.toFixed(4)}</Label
+			>
+			<Range
+				id="color-chroma"
+				min="0"
+				max={color.maxChroma}
+				bind:value={cs}
+				step={0.0001}
+				on:change={colorSliderChanged}
+			/>
+		</div>
+		<div>
+			<Label for="color-hue" class="block mb-2">Hue: {hs.toFixed(2)}</Label>
+			<Range
+				id="color-hue"
+				min="0"
+				max="360"
+				bind:value={hs}
+				step={0.01}
+				on:change={colorSliderChanged}
+			/>
+		</div>
+	</div>
 </div>
 
 <p>
@@ -143,16 +143,18 @@
 	<code>m</code>
 	to toggle color hex values, and <code>d</code> to toggle dark mode. Press <code>space</code> to
 	randomize base color and <code>x</code> to reset UI.<br />
-	You can expand a palette to only focus on that palette when generating colors. Base color is marked
-	with rounded edges where available.<br />
-	{#if fallback}<strong>
-			Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
-			colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors
-			that are of high/low intensity to ensure a perceptually uniform color space. Read more about
-			how this works in the <a href="/interactive/uniform-colors-oklch"
-				>exploring OKLCH color space</a
-			> page.
-		</strong>{/if}
+	{#if !$zoomedPalette}
+		You can expand a palette to only focus on that palette when generating colors. Base color is
+		marked with rounded edges where available.<br />
+		{#if fallback}<strong>
+				Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
+				colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors
+				that are of high/low intensity to ensure a perceptually uniform color space. Read more about
+				how this works in the <a href="/interactive/uniform-colors-oklch"
+					>exploring OKLCH color space</a
+				> page.
+			</strong>{/if}
+	{/if}
 </p>
 
 <Palette

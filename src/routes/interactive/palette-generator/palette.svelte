@@ -13,11 +13,11 @@
 	export let className = 'flex gap-4 mt-2 mb-8';
 
 	$: zoomed = name === $zoomedPalette;
-	$: classNameZoomed = `${className} ${zoomed ? 'h-lvh' : ''}`;
+	$: classNameZoomed = `${className} ${zoomed ? 'h-128' : ''}`;
 </script>
 
 {#if !$zoomedPalette || $zoomedPalette == name}
-	<div class="color-palette">
+	<div class="color-palette h-">
 		<h3 class="mt-4 flex items-center justify-between">
 			{name}
 
