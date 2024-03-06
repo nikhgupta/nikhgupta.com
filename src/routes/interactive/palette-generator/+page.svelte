@@ -61,7 +61,7 @@
 
 	import { sineIn } from 'svelte/easing';
 
-	let hideHelp = false;
+	let hideHelp = true;
 	let transitionParamsRight = { x: 320, duration: 200, easing: sineIn };
 </script>
 
@@ -234,6 +234,7 @@
 	transitionParams={transitionParamsRight}
 	bind:hidden={hideHelp}
 	backdrop={true}
+	class="max-w-128 w-full"
 >
 	<div class="flex items-center">
 		<h5
@@ -260,16 +261,20 @@
 		<li>Base color is marked with rounded edges where available.</li>
 		<li>You can expand a palette to only focus on that palette when generating colors.</li>
 	</ul>
-	{#if !$zoomedPalette}
-		{#if fallback}<strong>
-				Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
-				colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors
-				that are of high/low intensity to ensure a perceptually uniform color space. Read more about
-				how this works in the <a href="/interactive/uniform-colors-oklch"
-					>exploring OKLCH color space</a
-				> page.
-			</strong>{/if}
-	{/if}
+
+	<hr />
+
+	<h3 class="mt-8">FAQs</h3>
+
+	<h4 class="mb-0 mt-8 text-base">Why use a fallback color instead of the color I provided?</h4>
+	<p class="text-sm mt-2">
+		Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
+		colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors that
+		are of high/low intensity to ensure a perceptually uniform color space. Read more about how this
+		works in the <a href="/interactive/uniform-colors-oklch">exploring OKLCH color space</a> page.
+	</p>
+
+	<hr />
 </Drawer>
 
 <svelte:window on:keydown={onKeyDown} />

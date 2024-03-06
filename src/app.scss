@@ -46,8 +46,13 @@ a {
 	text-decoration: underline;
 }
 
+p,
+ul li {
+	@apply font-text;
+}
+
 p {
-	@apply font-text my-4;
+	@apply my-4;
 }
 
 .post-title {
@@ -90,6 +95,17 @@ li code {
 	@apply text-red-400 font-bold;
 }
 
-.h-128 {
-	height: 32rem;
+@layer {
+	.h-128 {
+		height: 32rem;
+	}
+
+	.w-128 {
+		width: 32rem;
+	}
+
+	.max-w-128 {
+		max-width: 32rem;
+	}
+
 }
