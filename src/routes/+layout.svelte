@@ -17,7 +17,7 @@
 
 <footer>
 	<div class="flex space-x-4 items-center">
-		<span>Available on:</span>
+		<span>I am available on:</span>
 		<a href="mailto:me+web@nikhgupta.com" target="_blank">Email</a>
 		<a href="https://github.com/nikhgupta" target="_blank">Github</a>
 		<a href="https://in.tradingview.com/u/NikhilGuptab4/#published-scripts" target="_blank">
