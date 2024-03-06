@@ -1,13 +1,24 @@
 <script lang="ts">
-	import { copy } from 'svelte-copy';
-	import { toast } from '@zerodevx/svelte-toast';
+	import { copyText } from 'svelte-copy';
+	import { Toast } from 'flowbite-svelte';
+	import { FileCopyOutline } from 'flowbite-svelte-icons';
 
 	import type { Color } from './colors';
 	import { zoomedPalette, baseColor, showColor } from './store';
 
+	let copiedColor: string | null = null;
+
 	function handleZoomClick(e: MouseEvent) {
 		zoomed = !zoomed;
 		zoomedPalette.set(zoomed ? name : null);
+	}
+
+	function copyColor(color: Color) {
+		copiedColor = color.toHex();
+		copyText(copiedColor);
+		setTimeout(() => {
+			copiedColor = null;
+		}, 3000);
 	}
 
 	export let name: string;
@@ -52,23 +63,39 @@
 		</h3>
 		<div class={classNameZoomed}>
 			{#each colors as c}
-				<div
-					role="button"
-					tabindex="0"
+				<button
 					class="w-full {zoomed ? 'h-full' : 'h-16'} {$baseColor.toHex() === c.toHex()
 						? 'rounded-xl'
 						: ''} flex items-center justify-center"
 					style="background-color: {c.toHex()}"
-					use:copy={c.toHex()}
-					on:svelte-copy={(e) => toast.push(`Copied ${e.detail} to clipboard!`)}
+					on:click={(e) => copyColor(c)}
 				>
 					{#if $showColor}
 						<svg viewBox="0 0 80 18" style="max-width: 80px; fill: {c.contrastColor}">
 							<text x="5" y="15">{c.toHex()}</text>
 						</svg>
 					{/if}
-				</div>
+				</button>
 			{/each}
 		</div>
 	</div>
 {/if}
+
+{#key copiedColor}
+	{#if copiedColor}
+		<Toast
+			color="green"
+			class="fixed bottom-4 right-4 w-full max-w-xs p-4 text-gray-50 dark:text-gray-950 bg-gray-800 dark:bg-gray-50 gap-3 shadow-lg"
+		>
+			<svelte:fragment slot="icon">
+				<FileCopyOutline class="w-5 h-5" />
+				<span class="sr-only">Check icon</span>
+			</svelte:fragment>
+
+			<span style="color: {copiedColor}">
+				&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;
+			</span><br />
+			<span>Copied {copiedColor} to clipboard.</span>
+		</Toast>
+	{/if}
+{/key}
