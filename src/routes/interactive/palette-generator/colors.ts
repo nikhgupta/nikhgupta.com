@@ -1,17 +1,19 @@
 import { browser } from '$app/environment';
-import { useMode, modeOklch, modeRgb, formatHex } from 'culori/fn';
+import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'culori/fn';
 
 import mappings from './oklch-color-mapping.json';
 const map: Record<number, number> = mappings;
 
-let randomMap: [number, number][] = [];
-Object.entries(map).forEach((item, index) => {
-	const l = parseFloat(item[0]);
-	if (l > 0.3 && l < 0.9) {
-		var clone: [number, number][] = Array(Math.round(Math.min(l, 1 - l) * 100)).fill([l, item[1]]);
-		randomMap.push(...clone);
-	}
-});
+function randomBinomial() {
+	let u = 0,
+		v = 0;
+	while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+	while (v === 0) v = Math.random();
+	let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+	num = num / 10.0 + 0.5; // Translate to 0 -> 1
+	if (num > 1 || num < 0) return randomBinomial(); // resample between 0 and 1
+	return num;
+}
 
 const BLACK = '#000';
 const WHITE = '#fff';
@@ -20,10 +22,10 @@ const MIN_LIGHT = 0.125;
 const MAX_LIGHT = 0.98;
 const MIN_LIGHT_VARY = 0.44;
 const MAX_LIGHT_VARY = 0.94;
-const CONTRAST_THRESHOLD = 0.5;
+export const DEFAULT_COLOR = '#e9b082';
+export const CONTRAST_THRESHOLD = 0.6;
 const DEFAULT_SIZE = 11;
 const DEFAULT_DISTANCE = 30;
-export const DEFAULT_COLOR = { l: 0.8252, c: 0.10179611632754734, h: 6.452301295903021, a: 1 }; // #fab
 
 const rgb = useMode(modeRgb);
 const lch = useMode(modeOklch);
@@ -51,26 +53,46 @@ export class Color {
 	a: number;
 	maxChroma: number;
 	contrastColor: string;
+	originalChroma: number;
 
-	constructor(l: number, c: number, h: number, a: number = 1) {
+	constructor(l: number, c: number, h: number, a: number = 1, clamp: boolean = true) {
 		this.l = l;
 		this.h = h;
 		this.a = a;
 
 		this.maxChroma = this.maxChromaFor(l);
-		this.c = this.maxChroma < c ? this.maxChroma : c;
+		this.c = this.maxChroma < c && clamp ? this.maxChroma : c;
+		this.originalChroma = c;
 
 		this.contrastColor = this.l > CONTRAST_THRESHOLD ? BLACK : WHITE;
 		this.data = { mode: 'oklch', l, c: this.c, h, alpha: a };
 	}
 
-	static fromRgb(color: string) {
+	originalColor() {
+		if (this.originalChroma == this.c) return this;
+		return new Color(this.l, this.originalChroma, this.h, this.a, false);
+	}
+
+	static default() {
+		const color = Color.fromRgb(DEFAULT_COLOR);
+		return color ? color : new Color(0.5, 0.5, 0.05);
+	}
+
+	static maxChromaValueForLightness(l: number) {
+		const c = map[Math.round(l * 10000) / 10000];
+		return c ? c : 0;
+	}
+
+	static fromRgb(color: string, clamp: boolean = true) {
+		if (!displayable(color) || color.length < 6) return;
 		const lchValue = { mode: 'oklch', h: 0, l: 0, c: MIN_CHROMA, alpha: 1, ...lch(rgb(color)) };
-		return new Color(lchValue.l, lchValue.c, lchValue.h, lchValue.alpha);
+		return new Color(lchValue.l, lchValue.c, lchValue.h, lchValue.alpha, clamp);
 	}
 
 	static fromRandom() {
-		const [l, c] = randomMap[~~(Math.random() * randomMap.length)];
+		const l = randomBinomial() / 4 + Math.random() / 2 + 0.25;
+		let c = Color.maxChromaValueForLightness(l);
+		c = (randomBinomial() * c) / 4 + (Math.random() * c) / 2 + c / 4;
 		return new Color(l, c, Math.random() * 360);
 	}
 
@@ -97,8 +119,7 @@ export class Color {
 	}
 
 	maxChromaFor(l: number = this.l) {
-		const c = map[Math.round(l * 10000) / 10000];
-		return c ? c : 0;
+		return Color.maxChromaValueForLightness(l);
 	}
 
 	_transformHue(h: number) {
