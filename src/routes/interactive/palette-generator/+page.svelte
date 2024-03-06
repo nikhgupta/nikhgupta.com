@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Palette from './palette.svelte';
-	import { baseColor, showColor, zoomedPalette } from './store';
-	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './colors';
+	import Notes from './components/notes.svelte';
+	import Palette from './components/palette.svelte';
+	import { baseColor, showColor, zoomedPalette } from './lib/store';
+	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './lib/colors';
 
 	import { Range, Label, Input, Helper } from 'flowbite-svelte';
-	import { Drawer, Button, CloseButton } from 'flowbite-svelte';
-	import { InfoCircleSolid, ArrowRightOutline } from 'flowbite-svelte-icons';
+	import Drawer from './components/drawer.svelte';
 
 	let numSlider = 12;
 	let color = Color.default();
@@ -59,10 +59,7 @@
 		if (c) [ls, cs, hs] = c.valuesAt('l', 'c', 'h');
 	};
 
-	import { sineIn } from 'svelte/easing';
-
 	let hideHelp = true;
-	let transitionParamsRight = { x: 320, duration: 200, easing: sineIn };
 </script>
 
 <h2 class="post-title">Generating Color Schemes using OKLCH colorspace</h2>
@@ -212,85 +209,8 @@
 	/>
 {/if}
 
-<Drawer
-	placement="right"
-	transitionType="fly"
-	transitionParams={transitionParamsRight}
-	bind:hidden={hideHelp}
-	backdrop={true}
-	class="max-w-128 w-full"
->
-	<div class="flex items-center">
-		<h5
-			id="drawer-label"
-			class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"
-		>
-			<InfoCircleSolid class="w-4 h-4 me-2.5" />Help / Usage
-		</h5>
-		<CloseButton on:click={() => (hideHelp = true)} class="mb-4 dark:text-white" />
-	</div>
-
-	<h4 class="mb-2 mt-8 text-base">Keyboard Shortcuts</h4>
-	<ul class="list-disc list-inside mb-6 text-sm text-gray-500 dark:text-gray-400">
-		<li>Press <code>-</code> to decrease palette size.</li>
-		<li>Press <code>=</code> to increase palette size.</li>
-		<li>Press <code>m</code> to toggle color hex values.</li>
-		<li>Press <code>d</code> to toggle dark mode.</li>
-		<li>Press <code>space</code> to randomize base color.</li>
-		<li>Press <code>x</code> to reset UI.</li>
-	</ul>
-
-	<h4 class="mb-2 mt-8 text-base">Helpful Tips</h4>
-	<ul class="list-disc list-inside mb-6 text-sm text-gray-500 dark:text-gray-400">
-		<li>Base color is marked with rounded edges where available.</li>
-		<li>You can expand a palette to only focus on that palette when generating colors.</li>
-	</ul>
-
-	<hr />
-
-	<h3 class="mt-8">FAQs</h3>
-
-	<h4 class="mb-0 mt-8 text-base">Why use a fallback color instead of the color I provided?</h4>
-	<p class="text-sm mt-2">
-		Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
-		colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors that
-		are of high/low intensity to ensure a perceptually uniform color space. Read more about how this
-		works in the <a href="/interactive/uniform-colors-oklch">exploring OKLCH color space</a> page.
-	</p>
-
-	<hr />
-</Drawer>
-
-<svelte:window on:keydown={onKeyDown} />
-
 <hr />
 
-<p class="mt-8 mb-4">
-	I created this utility to experiment with the OKLCH colorspace and for refreshing my knowledge of
-	color theory and SvelteJS. It was created over a weekend and does not use any server side code.
-	Although, it has many features that are comparable to popular color generators, it is still a fun
-	little tool hosted on Vercel.<br /><br />
-	<strong>
-		If you believe the tool can be improved in some way, please feel free to reach me via email.
-	</strong><br />My email is provided at the bottom of this page. Happy to help.
-</p>
-
-<h2 class="mt-8">Todos</h2>
-<ul class="list-disc list-inside mt-2">
-	<li>Allow sharing of color-palettes by linking to a permalink.</li>
-	<li>Allow exporting color palettes (and/or currently zoomed one).</li>
-	<li>Double click on a color to set it as base color.</li>
-</ul>
-
-<h2 class="mt-8">Completed</h2>
-<ul class="list-disc list-inside mt-2">
-	<li><del>Single click on a color to copy it.</del></li>
-	<li><del>Bug in input for hex color - user can not type a hex color.</del></li>
-	<li><del>Random color should also vary in chroma instead of being fixed at max chroma.</del></li>
-	<li><del>Highlight base color in all palettes.</del></li>
-	<li>
-		<del>
-			Lightness in Color palettes (e.g. triadic, tetradic, etc) should be relative to base color.
-		</del>
-	</li>
-</ul>
+<Notes />
+<Drawer {hideHelp} />
+<svelte:window on:keydown={onKeyDown} />

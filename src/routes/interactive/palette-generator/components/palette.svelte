@@ -3,8 +3,8 @@
 	import { Toast } from 'flowbite-svelte';
 	import { FileCopyOutline } from 'flowbite-svelte-icons';
 
-	import type { Color } from './colors';
-	import { zoomedPalette, baseColor, showColor } from './store';
+	import type { Color } from '../lib/colors';
+	import { zoomedPalette, baseColor, showColor } from '../lib/store';
 
 	let copiedColor: string | null = null;
 
