@@ -15,13 +15,13 @@
 {#if showTodos}
 	<h2 class="mt-8">Todos</h2>
 	<ul class="list-disc list-inside mt-2">
-		<li>Allow sharing of color-palettes by linking to a permalink.</li>
 		<li>Allow exporting color palettes (and/or currently zoomed one).</li>
 		<li>Double click on a color to set it as base color.</li>
 	</ul>
 
 	<h2 class="mt-8">Completed</h2>
 	<ul class="list-disc list-inside mt-2">
+		<li><del>Allow sharing of color-palettes by linking to a permalink.</del></li>
 		<li><del>Single click on a color to copy it.</del></li>
 		<li><del>Bug in input for hex color - user can not type a hex color.</del></li>
 		<li>
