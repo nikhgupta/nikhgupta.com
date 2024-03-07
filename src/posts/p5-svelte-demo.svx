@@ -13,8 +13,6 @@ color: cadetblue
 	import P5 from "p5-svelte"
 	import type { Sketch } from 'p5-svelte';
 
-	import Boingers from "./boingers.svelte"
-
 	const sketch: Sketch = (p5) => {
 		p5.setup = () => {
 			p5.createCanvas(865, 400);
@@ -35,7 +33,5 @@ color: cadetblue
 </script>
 
 ## hello
-
-<Boingers {color} />
 
 <P5 {sketch} />

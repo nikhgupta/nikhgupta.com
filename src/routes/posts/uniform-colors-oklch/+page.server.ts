@@ -6,9 +6,13 @@ const loadFile = async function (filepath: string) {
 	return fs.readFileSync(filepath, 'utf-8');
 };
 
-export async function load(_) {
+export async function load({}) {
 	const codeMapper = await loadFile('mapper.ts');
 	const codePaletteHue = await loadFile('paletteHue.svelte');
 	const codePaletteLightness = await loadFile('paletteLightness.svelte');
-	return { codeMapper, codePaletteHue, codePaletteLightness };
+	return {
+		codeMapper,
+		codePaletteHue,
+		codePaletteLightness
+	};
 }

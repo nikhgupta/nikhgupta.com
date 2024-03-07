@@ -33,7 +33,7 @@
 	</hgroup>
 
 	<!-- Tags -->
-	{#if data.metadata.categories}
+	{#if data.metadata.categories && data.metadata.categories.length > 0}
 		<div class="tags">
 			{#each data.metadata.categories as category}
 				<span class="mr-3">

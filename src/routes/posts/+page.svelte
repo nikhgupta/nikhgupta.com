@@ -8,7 +8,7 @@
 	<title>Posts | Nikhil Gupta</title>
 </svelte:head>
 
-<h3>Published Posts</h3>
+<h1>Published Posts</h1>
 
 <!-- Posts -->
 <section>

@@ -2,8 +2,18 @@
 title: Exploring Uniform Colors in OKLCH color space
 description: Exploring the OKLCH color space to create uniform color palettes for web interfaces.
 published: true
-date: 2024-03-05
+date: '2024-03-05'
 ---
+
+<!--
+FIXME: svelte:head is needed because we are using +page.server.ts,
+and therefore, this post can not reside inside /src/posts.
+This, also, means that the layout `mdsvex` is not being applied.
+-->
+<svelte:head>
+	<title>{title} | Nikhil Gupta</title>
+	<meta property="description" content={description} />
+</svelte:head>
 
 <script lang="ts">
 	import { Range, Label } from 'flowbite-svelte';
