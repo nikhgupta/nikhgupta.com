@@ -1,0 +1,11 @@
+---
+title: Colophon
+---
+
+Nothing to see here, yet. A write up of the tools and technologies used to build this site is coming soon. 
+
+I’m a big fan of  colophons. I love reading about the tools and technologies that people use to build their websites. I’m working on a write up of the tools and technologies used to build this site. 
+
+I have plans to also write about the tools and apps I use to manage my life and work.
+
+Stay tuned!

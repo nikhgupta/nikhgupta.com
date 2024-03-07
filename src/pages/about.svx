@@ -1,0 +1,25 @@
+---
+title: An open letter to you - about me.
+---
+
+Hello,
+
+Welcome to my personal slice of the digital universe! I'm Nikhil Gupta, and I'm delighted you've decided to visit my corner of the internet.
+
+Here's a little about me: I'm a coder at heart and a problem-solver by nature. I've spent over a decade exploring the realms of technology, dabbling in everything from Ruby to Python and React. Coding, for me, is like a form of art; it's a way of expressing solutions to complex puzzles in beautifully efficient ways.
+
+Outside of the tech world, I'm an avid learner and explorer. I'm always on the lookout for new challenges and experiences, whether that's driving for days to find that one hidden place, or delving into the depths of chess strategy, or speed-cubing to beat my personal best. These puzzles and adventures mirror the complexities I love to unravel in the coding world, but they also offer a refreshing escape and a way to sharpen my mind.
+
+Photography holds a special place in my life as well. It's my way of capturing moments, telling stories without words, and seeing the world from different perspectives. It’s a practice in mindfulness and an appreciation of the present moment, which balances the fast-paced nature of the tech world.
+
+Recently, I've embarked on a fascinating journey with Generative AI, exploring its potential and pushing its boundaries. This exploration isn't just about understanding technology; it's about finding creative ways to integrate innovation into everyday solutions.
+
+Through my website, I have planned to share insights, challenges, and the joy found in coding, learning, and living. This space is not just about showcasing my work (which I love to do); it's about sharing knowledge, and inspiring creativity.
+
+On the other hand, I'm all about productivity hacking, code mentoring, and life automation—anything that makes life more efficient and gives us more time to enjoy the real joys. If you're interested in the intersection of technology, life hacks, and personal growth, you've come to the right place.
+
+Thank you for stopping by. I hope you find something here that sparks your interest or inspires you. Let's navigate this ever-evolving digital landscape together.
+
+With warm regards,
+
+Nikhil G. <small>(on March 8, 2024)</small>
