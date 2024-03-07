@@ -1,9 +1,10 @@
-<svelte:head>
-  <title>Nikhil Gupta - Resume</title>
-  <meta name="description" content="Nikhil Gupta's resume. Full Stack Engineer with over a decade of experience in the tech industry, specializing in Ruby on Rails, Python, and React. Adept at leading teams, mentoring, and enhancing business processes through innovative technical solutions." />
-  <meta name="keywords" content="Nikhil Gupta, Resume, Full Stack Engineer, Ruby on Rails, Python, React, PostgreSQL, Sidekiq, RSpec, GraphQL, Incident Management, Team building, Scout APM, DataDog Monitoring, CircleCl, CodeCoverage, Slack, Asana, Github, VIM, ZSH, MacOS, dotfiles, Generative AI, code refactoring, vector databases, algorithmic trading, technical analysis, performance improvement, Photography, Chess, speed-cubing, Productivity Hacking, Code Mentoring, Automation" />
-</svelte:head>
+---
+title: Resume
+description: Full Stack Engineer with over a decade of experience in the tech industry, specializing in Ruby on Rails, Python, and React. Adept at leading teams, mentoring, and enhancing business processes through innovative technical solutions.
+keywords: Nikhil Gupta, Resume, Full Stack Engineer, Ruby on Rails, Python, React, PostgreSQL, Sidekiq, RSpec, GraphQL, Incident Management, Team building, Scout APM, DataDog Monitoring, CircleCl, CodeCoverage, Slack, Asana, Github, VIM, ZSH, MacOS, dotfiles, Generative AI, code refactoring, vector databases, algorithmic trading, technical analysis, performance improvement, Photography, Chess, speed-cubing, Productivity Hacking, Code Mentoring, Automation
+---
 
+**Nikhil Gupta**  
 +91-983-176-2034 • me@nikhgupta.com • @[github](https://github.com/nikhgupta) • @[linkedin](https://linkedin.com/in/nikhgupta)  
 Jaipur, Rajasthan, India - 302019
 
