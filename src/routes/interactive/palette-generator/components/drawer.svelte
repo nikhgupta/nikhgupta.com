@@ -48,9 +48,10 @@
 	<h4 class="mb-0 mt-8 text-base">Why use a fallback color instead of the color I provided?</h4>
 	<p class="text-sm mt-2">
 		Color was out of gamut (not all hues were available for selected lightness/chroma in OKLCH
-		colorspace), so it was replaced with a fallback color. OKLCH colorspace does remove colors that
-		are of high/low intensity to ensure a perceptually uniform color space. Read more about how this
-		works in the <a href="/interactive/uniform-colors-oklch">exploring OKLCH color space</a> page.
+		colorspace), so it was replaced with a fallback color. This tool only considers colors in OKLCH
+		colorspace that have all hues present for the same lightness and chroma. All other colors are
+		filtered out. Read more about how this works in the
+		<a href="/interactive/uniform-colors-oklch">exploring OKLCH color space</a> page.
 	</p>
 
 	<hr />

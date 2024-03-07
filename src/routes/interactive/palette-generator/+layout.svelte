@@ -157,7 +157,10 @@
 </div>
 
 <p>
-	Press <code>/</code> (slash) to view helpful tips and keyboard shortcuts.
+	<strong>
+		Press <code>/</code> (slash) to view helpful tips and keyboard shortcuts. Press
+		<code>space</code> to randomize colors.
+	</strong>
 </p>
 
 <Palette
