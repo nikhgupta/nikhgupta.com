@@ -1,8 +1,9 @@
 <script lang="ts">
 	export let hue: number;
 	export let chroma: number = 0.04;
-	import mappings from './oklch-color-mapping.json';
-	const map: Record<number, number> = mappings;
+	import { lchChromaMap } from '$lib/store';
+
+	const map: Record<number, number> = $lchChromaMap;
 	const lr = Array.from({ length: 198 }, (x, i) => (i + 1) / 200);
 </script>
 

@@ -1,5 +1,5 @@
-// place files you want to import through the `$lib` alias in this folder.
 import * as utils from './utils';
+
 import MdsvexComponent from './importers/mdsvex.svelte';
 import { loadTaxonomy } from './importers/mdsvex';
 

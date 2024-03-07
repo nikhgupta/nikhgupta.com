@@ -1,8 +1,8 @@
-import { browser } from '$app/environment';
 import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'culori/fn';
 
-import mappings from './oklch-color-mapping.json';
-const map: Record<number, number> = mappings;
+import { lchChromaMap } from '$lib/store';
+let map: Record<number, number> = {};
+lchChromaMap.subscribe((value) => (map = value));
 
 function randomBinomial() {
 	let u = 0,
@@ -29,20 +29,6 @@ const DEFAULT_DISTANCE = 30;
 
 const rgb = useMode(modeRgb);
 const lch = useMode(modeOklch);
-
-export const toggleDarkMode = (mode: number = -1) => {
-	if (browser) {
-		const html = document.documentElement;
-		html.classList.add('app-ui');
-
-		if (mode == -1) mode = html.classList.contains('dark') ? 0 : 1;
-		if (mode === 1) {
-			html.classList.add('dark');
-		} else {
-			html.classList.remove('dark');
-		}
-	}
-};
 
 export class Color {
 	data: any;

@@ -1,27 +1,27 @@
+---
+title: Exploring Uniform Colors in OKLCH color space
+description: Exploring the OKLCH color space to create uniform color palettes for web interfaces.
+published: true
+date: 2024-03-05
+---
+
 <script lang="ts">
 	import { Range, Label } from 'flowbite-svelte';
-	import {CodeDisplay} from '$lib';
+	import { CodeDisplay } from '$lib';
+	import { lchChromaMap } from '$lib/store'
+	const map: Record<number, number> = $lchChromaMap;
 
 	import PaletteHue from './paletteHue.svelte';
 	import PaletteLightness from './paletteLightness.svelte';
 
-	import mappings from '../palette-generator/lib/oklch-color-mapping.json';
-	const map: Record<number, number> = mappings;
-
 	export let data;
+	let hueSlider = 27.33;
+	let maxChromaForHueSlider = 0.04;
+	let maxAvailableChroma = 0.1275;
 	let lightnessSlider = 0.7;
 	$: maxChromaForLightnessSlider = map[lightnessSlider];
 	$: maxAvailableChromaForLightnessSlider = map[lightnessSlider];
-
-	let hueSlider = 27.33;
-	let maxChromaForHueSlider = 0.04;
-	const maxAvailableChroma = 0.1275;
 </script>
-
-<svelte:head>
-	<title>Exploring Uniform Colors in OKLCH color space | Nikhil Gupta</title>
-	<meta name="description" content="Exploring the OKLCH color space to create uniform color palettes for web interfaces." />
-</svelte:head>
 
 # Exploring Uniform Colors in OKLCH color space
 

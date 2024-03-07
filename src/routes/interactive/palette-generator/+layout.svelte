@@ -4,10 +4,11 @@
 	import { Range, Label, Helper } from 'flowbite-svelte';
 
 	import './style.scss';
+	import { utils } from '$lib';
 	import Notes from './components/notes.svx';
 	import Drawer from './components/drawer.svelte';
 	import Palette from './components/palette.svelte';
-	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './lib/colors';
+	import { Color, CONTRAST_THRESHOLD } from './lib/colors';
 	import {
 		ls,
 		hs,
@@ -27,7 +28,7 @@
 	$: originalColor = color.originalColor();
 	$: fallback = color != originalColor && $showFallback;
 	$: csClamped = Math.min(color.maxChroma, $cs);
-	$: toggleDarkMode($ls > CONTRAST_THRESHOLD ? 0 : 1);
+	$: utils.toggleDarkMode($ls > CONTRAST_THRESHOLD ? 0 : 1);
 	$: hueDistanceSlider = Math.min(30, 360 / numSlider);
 
 	const onKeyDown = (e: KeyboardEvent) => {
@@ -45,7 +46,7 @@
 			showColor.set(false);
 			zoomedPalette.set(null);
 		} else if (e.code === 'KeyD') {
-			toggleDarkMode(-1);
+			utils.toggleDarkMode(-1);
 		} else if (e.code === 'KeyM') {
 			showColor.set(!$showColor);
 		} else if (e.code === 'Equal') {
@@ -163,67 +164,69 @@
 	</strong>
 </p>
 
-<Palette
-	name="Swatch (hue)"
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.hueSwatch(numSlider, hueDistanceSlider)}
-/>
-
-<Palette
-	name="Swatch (lightness)"
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.lightnessSwatch(numSlider)}
-/>
-
-<Palette name="Shades" colors={color.shades(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
-<Palette name="Tones" colors={color.tones(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
-<Palette name="Tints" colors={color.tints(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
-
-<Palette
-	name="Complimentary"
-	className="flex mt-2 md:gap-1 mb-8"
-	colors={color.complimentary(numSlider)}
-/>
-
-{#if numSlider > 2}
+<div class="grid grid-cols-1 2xl:grid-cols-2 gap-x-4 2xl:gap-x-16">
 	<Palette
-		name="Analogous"
+		name="Swatch (hue)"
 		className="flex mt-2 md:gap-1 mb-8"
-		colors={color.analogous(numSlider, hueDistanceSlider)}
+		colors={color.hueSwatch(numSlider, hueDistanceSlider)}
 	/>
 
 	<Palette
-		name="Split Complimentary"
+		name="Swatch (lightness)"
 		className="flex mt-2 md:gap-1 mb-8"
-		colors={color.splitComplimentary(numSlider, hueDistanceSlider)}
+		colors={color.lightnessSwatch(numSlider)}
 	/>
 
-	<Palette
-		name="Triadic"
-		className="flex mt-2 md:gap-1 mb-8"
-		colors={color.triadic(numSlider, hueDistanceSlider)}
-	/>
+	<Palette name="Shades" colors={color.shades(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
+	<Palette name="Tones" colors={color.tones(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
+	<Palette name="Tints" colors={color.tints(numSlider)} className="flex mt-2 md:gap-1 mb-8" />
 
 	<Palette
-		name="Triadic (inclusive)"
+		name="Complimentary"
 		className="flex mt-2 md:gap-1 mb-8"
-		colors={color.triadicInclusive(numSlider, hueDistanceSlider)}
-	/>
-{/if}
-
-{#if numSlider > 3}
-	<Palette
-		name="Tetradic"
-		className="flex mt-2 md:gap-1 mb-8"
-		colors={color.tetradic(numSlider, hueDistanceSlider)}
+		colors={color.complimentary(numSlider)}
 	/>
 
-	<Palette
-		name="Tetradic (inclusive)"
-		className="flex mt-2 md:gap-1 mb-8"
-		colors={color.tetradicInclusive(numSlider, hueDistanceSlider)}
-	/>
-{/if}
+	{#if numSlider > 2}
+		<Palette
+			name="Analogous"
+			className="flex mt-2 md:gap-1 mb-8"
+			colors={color.analogous(numSlider, hueDistanceSlider)}
+		/>
+
+		<Palette
+			name="Split Complimentary"
+			className="flex mt-2 md:gap-1 mb-8"
+			colors={color.splitComplimentary(numSlider, hueDistanceSlider)}
+		/>
+
+		<Palette
+			name="Triadic"
+			className="flex mt-2 md:gap-1 mb-8"
+			colors={color.triadic(numSlider, hueDistanceSlider)}
+		/>
+
+		<Palette
+			name="Triadic (inclusive)"
+			className="flex mt-2 md:gap-1 mb-8"
+			colors={color.triadicInclusive(numSlider, hueDistanceSlider)}
+		/>
+	{/if}
+
+	{#if numSlider > 3}
+		<Palette
+			name="Tetradic"
+			className="flex mt-2 md:gap-1 mb-8"
+			colors={color.tetradic(numSlider, hueDistanceSlider)}
+		/>
+
+		<Palette
+			name="Tetradic (inclusive)"
+			className="flex mt-2 md:gap-1 mb-8"
+			colors={color.tetradicInclusive(numSlider, hueDistanceSlider)}
+		/>
+	{/if}
+</div>
 
 <hr />
 

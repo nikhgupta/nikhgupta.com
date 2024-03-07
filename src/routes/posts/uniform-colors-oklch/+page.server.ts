@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const loadFile = async function (filepath: string) {
-	filepath = path.resolve(`src/routes/interactive/uniform-colors-oklch/${filepath}`);
+	filepath = path.resolve(`src/routes/posts/uniform-colors-oklch/${filepath}`);
 	return fs.readFileSync(filepath, 'utf-8');
 };
 
