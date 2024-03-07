@@ -3,7 +3,7 @@
 	export let chroma: number = -1;
 	import mappings from './oklch-color-mapping.json';
 	const map: Record<number, number> = mappings;
-	const hr = Array.from({ length: 360 }, (x, i) => i + 1);
+	const hr = Array.from({ length: 100 }, (x, i) => i * 3.6);
 	chroma = chroma > 0 ? chroma : map[lightness];
 </script>
 

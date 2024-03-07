@@ -8,9 +8,11 @@
 	<title>Posts | Nikhil Gupta</title>
 </svelte:head>
 
+<h3>Published Posts</h3>
+
 <!-- Posts -->
 <section>
-	<ul class="posts">
+	<ul class="posts list-none">
 		{#each data.posts as post}
 			<li class="post">
 				<a href="/posts/{post.slug}" class="title">{post.title}</a>

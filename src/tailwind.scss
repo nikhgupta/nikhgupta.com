@@ -3,27 +3,34 @@
 @tailwind base;
 
 @layer base {
-  h1 {
+
+  h1,
+  .h1 {
     @apply font-text text-3xl font-bold mt-12 mb-8;
   }
 
-  h2 {
+  h2,
+  .h2 {
     @apply font-text text-2xl font-bold mt-8 mb-4;
   }
 
-  h3 {
+  h3,
+  .h3 {
     @apply font-text text-xl font-bold mt-6 mb-3;
   }
 
-  h4 {
+  h4,
+  .h4 {
     @apply font-text text-lg font-bold mt-4 mb-2;
   }
 
-  h5 {
+  h5,
+  .h5 {
     @apply font-text text-base font-bold mt-4 mb-2;
   }
 
-  h6 {
+  h6,
+  .h6 {
     @apply font-text text-base my-4;
   }
 
@@ -41,6 +48,10 @@
 
   p {
     @apply my-4;
+  }
+
+  input[type='range'] {
+    @apply mt-1 mb-3;
   }
 }
 
