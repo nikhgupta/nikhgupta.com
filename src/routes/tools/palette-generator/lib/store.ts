@@ -27,7 +27,7 @@ export const setBaseColorFromLCH = (l: number, c: number, h: number) => {
 
 export const visitColor = (color: Color | undefined) => {
 	if (color) {
-		goto(`/interactive/palette-generator/${color.toHex().slice(1)}`);
+		goto(`/tools/palette-generator/${color.toHex().slice(1)}`);
 	}
 };
 

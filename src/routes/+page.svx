@@ -34,5 +34,5 @@ keywords: "Nikhil Gupta, personal website, blog, tradingview, github"
 Currently, I am:
 - looking for a job in a startup that fosters culture and open-communication. [resume](/resume)
 - integrating Generative AI in quantitative analysis and trading.
-- exploring Color Theory, specifically [OKLCH color space for uniform colors](/interactive/uniform-colors-oklch).
-- writing an [interactive palette generator based on OKLCH colorspace](/interactive/palette-generator) in SvelteJS.
+- exploring Color Theory, specifically [OKLCH color space for uniform colors](/posts/uniform-colors-oklch).
+- writing an [interactive palette generator based on OKLCH colorspace](/tools/palette-generator) in SvelteJS.

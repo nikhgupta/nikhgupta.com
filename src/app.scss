@@ -1,13 +1,5 @@
 @import 'src/tailwind.scss';
 
-html.app-ui body {
-	@apply bg-white max-w-full;
-}
-
-html.app-ui.dark body {
-	@apply bg-black;
-}
-
 body {
 	@apply font-text;
 	@apply bg-slate-50 dark:bg-slate-950 text-slate-950 dark:text-slate-50;

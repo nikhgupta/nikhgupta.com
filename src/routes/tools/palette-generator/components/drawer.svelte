@@ -51,7 +51,7 @@
 		colorspace), so it was replaced with a fallback color. This tool only considers colors in OKLCH
 		colorspace that have all hues present for the same lightness and chroma. All other colors are
 		filtered out. Read more about how this works in the
-		<a href="/interactive/uniform-colors-oklch">exploring OKLCH color space</a> page.
+		<a href="/posts/uniform-colors-oklch">exploring OKLCH color space</a> page.
 	</p>
 
 	<hr />

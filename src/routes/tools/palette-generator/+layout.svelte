@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import { browser } from '$app/environment';
 	import { Range, Label, Helper } from 'flowbite-svelte';
 
 	import './style.scss';
@@ -61,13 +59,6 @@
 	const colorSliderChanged = (e: Event) => {
 		showFallback.set(false);
 	};
-
-	onDestroy(() => {
-		if (browser) {
-			const html = document.documentElement;
-			html.classList.remove('app-ui');
-		}
-	});
 </script>
 
 <svelte:head>

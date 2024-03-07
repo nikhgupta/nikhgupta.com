@@ -15,7 +15,6 @@ export function formatDate(
 export const toggleDarkMode = (mode: number = -1) => {
 	if (browser) {
 		const html = document.documentElement;
-		html.classList.add('app-ui');
 
 		if (mode == -1) mode = html.classList.contains('dark') ? 0 : 1;
 		if (mode === 1) {

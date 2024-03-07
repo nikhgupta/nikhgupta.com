@@ -10,10 +10,9 @@ function safeCompareDates(a: types.Post, b: types.Post) {
 async function getPosts() {
 	let posts: types.Post[] = [];
 
-	let paths = import.meta.glob('/src/{posts/**/*.{svx,md},routes/posts/*/+page.svx}', {
+	const paths = import.meta.glob('/src/{posts/**/*,routes/posts/**/+page}.{svx,md}', {
 		eager: true
 	});
-
 	for (const path in paths) {
 		if (path.endsWith('/[slug]/+page.svx')) continue;
 
