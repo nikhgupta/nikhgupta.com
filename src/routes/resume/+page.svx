@@ -1,0 +1,86 @@
+<svelte:head>
+  <title>Nikhil Gupta - Resume</title>
+  <meta name="description" content="Nikhil Gupta's resume. Full Stack Engineer with over a decade of experience in the tech industry, specializing in Ruby on Rails, Python, and React. Adept at leading teams, mentoring, and enhancing business processes through innovative technical solutions." />
+  <meta name="keywords" content="Nikhil Gupta, Resume, Full Stack Engineer, Ruby on Rails, Python, React, PostgreSQL, Sidekiq, RSpec, GraphQL, Incident Management, Team building, Scout APM, DataDog Monitoring, CircleCl, CodeCoverage, Slack, Asana, Github, VIM, ZSH, MacOS, dotfiles, Generative AI, code refactoring, vector databases, algorithmic trading, technical analysis, performance improvement, Photography, Chess, speed-cubing, Productivity Hacking, Code Mentoring, Automation" />
+</svelte:head>
+
++91-983-176-2034 • me@nikhgupta.com • @[github](https://github.com/nikhgupta) • @[linkedin](https://linkedin.com/in/nikhgupta)  
+Jaipur, Rajasthan, India - 302019
+
+[Download PDF Version](/files/DOE%20-%20Nikhil%20Gupta%20-%20Resume%20-%2020240214.pdf) | Last updated on February 14, 2024
+
+## Sr. Full Stack Engineer
+
+Seasoned Full Stack Engineer with over a decade of experience in the tech industry, specializing in Ruby on Rails, Python, and React. Adept at leading teams, mentoring, and enhancing business processes through innovative technical solutions. Passionate about coding and automation, aiming to leverage extensive experience to contribute to the success of an organization.
+
+
+## WORK EXPERIENCE
+
+### ItsaCheckmate Pvt Ltd • <small>Remote</small>
+
+In my 2 years at ItsaCheckmate, I elevated efficiency, led product launches, and drove codebase optimizations, significantly impacting the organization's technical growth.
+
+##### Director of Engineering • <small>Mar 2022 - Jun 2023</small>
+
+- Enhanced code practices, boosting development throughput by 70% and review efficiency by 2.8x across 16 engineers.
+- Architected key product launches, and led a comprehensive code overhaul, resolving longstanding bugs.
+- Reduced application database size by over 1TB, cutting storage costs by 67%.
+- Integrated vector databases and generative AI for technical documentation, optimizing internal processes.
+
+##### Engineering Lead • <small>Sep 2021 - Mar 2022</small>
+
+- Developed a team of 6 engineers, improving project velocity by 60% through full-stack training.
+- Implemented adaptive sprint planning with Scrum and Kanban, achieving balanced workload distribution.
+- Established code quality protocols that expedited peer reviews and fostered team development.
+
+##### Sr. Software Developer • <small>Apr 2021 - Sep 2021</small>
+
+- Led critical migrations to Sidekiq and AWS with zero downtime, supporting 1M+ daily transactions.
+- Leveraged APM tools to enhance service performance by 37% and eliminated a major bug affecting database efficiency.
+
+
+
+### VGKids Inc • <small>Remote</small>
+
+As a software consultant, I applied my Ruby on Rails and e-commerce expertise to significantly improve VGKids' technology platform, resulting in enhanced user experience and efficiency.
+
+##### Software Consultant • <small>Oct 2018 - Feb 2021</small>
+
+- Modernized the application to Rails 6.0, crafting a comprehensive test suite that achieved 99.23% code coverage.
+- Improved app performance by 95%, decreasing average response time from 8 seconds to 400ms through optimization and caching strategies.
+
+
+### WickedDevelopers Inc. • <small>Jaipur, India</small>
+
+##### Engineering Manager • <small>Jul 2017 - Nov 2021</small>
+
+- Led a team of 12, steering complex Ruby and Python projects to align with strategic business goals and client needs.
+- Drove the company's growth by enhancing technical capabilities and supporting its expansion.
+
+##### Software Engineer, Team Lead • <small>Jul 2014 - Jun 2017</small>
+
+- Managed key software projects, ensuring high-quality solutions and addressing intricate technical problems.
+- Played a central role in team upskilling, directly contributing to the expansion of the company’s service offerings.
+
+##### Software Developer • <small>Jul 2011 - Jun 2014</small>
+
+- Executed diverse development projects, honing skills in Ruby and Python and consistently exceeding quality benchmarks.
+- Instrumental in the initial stages of company growth, establishing a foundation for future technical advancements.
+
+## EDUCATION
+
+**Indian Institute of Technology, Delhi**<br/>Bachelor of Technology (Civil Engineering Major)<br/><small class="text-hint">Departed during Semester VI to pursue an entrepreneurial career in web development.</small>
+
+**Global Open University, India**<br/>Bachelor of Science (Information Technology)<br/><small class="text-hint">Completed while opting for a career in software development.</small>
+
+## SKILLS & INTERESTS
+
+_Programming_<br/>**Ruby on Rails**, **Python**, **React**, **PostgreSQL**, Typescript, **Sidekiq**, **RSpec**, GraphQL
+
+_Leadership & Management_<br/>Incident Management, Team growth and training, **Team building**, Cross-department communication, Technical interviews, Sprint planning
+
+_Tools & Platforms_<br/>**Scout APM**, **DataDog Monitoring**, CircleCl, CodeCoverage, Slack, Asana, Github, VIM, ZSH, MacOS
+
+_Technical Interests_<br/>**dotfiles**, **Generative Al**, timeseries databases, API mashups, **code refactoring**, vector databases, algorithmic trading, technical analysis, performance improvement
+
+_Pursuits_<br/>**Photography**, Chess, speed-cubing, **Productivity Hacking**, Code Mentoring, Automation

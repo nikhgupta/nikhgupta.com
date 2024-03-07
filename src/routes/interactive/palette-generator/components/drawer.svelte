@@ -3,7 +3,7 @@
 	import { Drawer, CloseButton } from 'flowbite-svelte';
 	import { InfoCircleSolid } from 'flowbite-svelte-icons';
 
-	import Notes from './notes.svelte';
+	import Notes from './notes.svx';
 
 	export let hideHelp: boolean = true;
 	let transitionParamsRight = { x: 320, duration: 200, easing: sineIn };

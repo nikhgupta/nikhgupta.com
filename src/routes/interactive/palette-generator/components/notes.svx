@@ -1,0 +1,28 @@
+<script lang="ts">
+ export let showTodos: boolean = true;
+</script>
+
+I created this utility to experiment with the OKLCH colorspace and for refreshing my knowledge of
+color theory and SvelteJS. It was created over a weekend and does not use any server side code.
+Although, it has many features that are comparable to popular color generators, it is still a fun
+little tool hosted on Vercel.
+
+**If you believe the tool can be improved in some way, please feel free to reach me via email.** My email is provided at the bottom of the page.
+
+{#if showTodos}
+
+### Todos
+
+- Allow exporting color palettes (and/or currently zoomed one).
+- Double click on a color to set it as base color.
+
+### Completed
+
+- ~~Allow sharing of color-palettes by linking to a permalink.~~
+- ~~Single click on a color to copy it.~~
+- ~~Bug in input for hex color - user can not type a hex color.~~
+- ~~Random color should also vary in chroma instead of being fixed at max chroma.~~
+- ~~Highlight base color in all palettes.~~
+- ~~Lightness in Color palettes (e.g. triadic, tetradic, etc) should be relative to base color.~~
+
+{/if}

@@ -1,3 +1,11 @@
+<svelte:head>
+	<title>Nikhil Gupta</title>
+	<meta name="description" content="Nikhil Gupta's personal website" />
+	<meta name="keywords" content="Nikhil Gupta, personal website, blog, tradingview, github" />
+	<meta name="author" content="Nikhil Gupta" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+</svelte:head>
+
 <div class="bio max-w-3xl">
 	<div class="flex flex-col md:flex-row md:justify-center md:items-center">
 		<div>
@@ -25,20 +33,10 @@
 		and React/Svelte. I can be found utilizing these languages to work on projects aimed at
 		improving individual productivity, building online communities, or in photography niche.
 	</p>
-
-	<p class="text-xl">Currently, I am:</p>
-	<ul class="list-disc list-inside">
-		<li>looking for a job in a startup that fosters culture and open-communication.</li>
-		<li>integrating Generative AI in quantitative analysis and trading.</li>
-		<li>
-			exploring Color Theory, specifically
-			<a href="/interactive/uniform-colors-oklch">OKLCH color space for uniform colors</a>.
-		</li>
-		<li>
-			writing an
-			<a href="/interactive/palette-generator">
-				interactive palette generator based on OKLCH colorspace
-			</a> in SvelteJS.
-		</li>
-	</ul>
 </div>
+
+Currently, I am:
+- looking for a job in a startup that fosters culture and open-communication. [resume](/resume)
+- integrating Generative AI in quantitative analysis and trading.
+- exploring Color Theory, specifically [OKLCH color space for uniform colors](/interactive/uniform-colors-oklch).
+- writing an [interactive palette generator based on OKLCH colorspace](/interactive/palette-generator) in SvelteJS.

@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Qwitcher+Grypen:wght@700&display=swap');
+
+@tailwind base;
+
+@layer base {
+  h1 {
+    @apply font-text text-3xl font-bold mt-12 mb-8;
+  }
+
+  h2 {
+    @apply font-text text-2xl font-bold mt-8 mb-4;
+  }
+
+  h3 {
+    @apply font-text text-xl font-bold mt-6 mb-3;
+  }
+
+  h4 {
+    @apply font-text text-lg font-bold mt-4 mb-2;
+  }
+
+  h5 {
+    @apply font-text text-base font-bold mt-4 mb-2;
+  }
+
+  h6 {
+    @apply font-text text-base my-4;
+  }
+
+  ul {
+    @apply list-disc list-inside;
+  }
+
+  code {
+    @apply text-red-400 font-bold;
+  }
+
+  a {
+    @apply text-slate-950 dark:text-slate-50 underline;
+  }
+
+  p {
+    @apply my-4;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .font-qwitcher {
+    font-family: "Qwitcher Grypen", cursive;
+    font-style: normal;
+  }
+
+  .font-text {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+  }
+
+  .h-128 {
+    height: 32rem;
+  }
+
+  .w-128 {
+    width: 32rem;
+  }
+
+  .max-w-128 {
+    max-width: 32rem;
+  }
+
+  .text-hint {
+    @apply text-slate-500 dark:text-slate-400;
+  }
+}

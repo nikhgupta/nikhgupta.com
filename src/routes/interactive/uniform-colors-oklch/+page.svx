@@ -1,0 +1,125 @@
+<script lang="ts">
+	import mappings from '../palette-generator/lib/oklch-color-mapping.json';
+	const map: Record<number, number> = mappings;
+
+	import { Range, Label } from 'flowbite-svelte';
+	import PaletteHue from './paletteHue.svelte';
+	import PaletteLightness from './paletteLightness.svelte';
+	import CodeDisplay from '$lib/components/codeDisplay.svelte';
+
+	export let data;
+	let lightnessSlider = 0.7;
+	$: maxChromaForLightnessSlider = map[lightnessSlider];
+	$: maxAvailableChromaForLightnessSlider = map[lightnessSlider];
+
+	let hueSlider = 27.33;
+	let maxChromaForHueSlider = 0.04;
+	const maxAvailableChroma = 0.1275;
+</script>
+
+<svelte:head>
+	<title>Exploring Uniform Colors in OKLCH color space | Nikhil Gupta</title>
+	<meta name="description" content="Exploring the OKLCH color space to create uniform color palettes for web interfaces." />
+</svelte:head>
+
+# Exploring Uniform Colors in OKLCH color space
+
+In the pursuit of designing visually appealing and coherent interfaces, the choice of color
+palettes plays a pivotal role. Traditionally, many developers, including myself, have relied on
+the HSL color space to [generate uniform color schemes](https://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically). However, despite its straightforwardness, HSL often leads to inconsistent perceptions of color, mainly due to its lack of perceptual uniformity. This inconsistency was the catalyst for my exploration into an alternative approach, leading me to the OKLCH color space.
+
+### What we are trying to achieve?
+
+Finding uniform colors is rather tricky. We want to find a color palette that allows us to have
+different shades of colors but with same intensity. Eventually, we want to generate color palettes
+for tailwindcss that are uniform and consistent.
+
+<Label>
+	Lightness: {lightnessSlider.toFixed(4)}, Chroma: {maxChromaForLightnessSlider.toFixed(4)}
+</Label>
+<Range id="lightness" min="0" max="1" bind:value={lightnessSlider} step={0.0001} />
+<Range
+	id="lightness-chroma"
+	min="0"
+	max={maxAvailableChromaForLightnessSlider}
+	bind:value={maxChromaForLightnessSlider}
+	step={0.0001}
+/>
+
+<PaletteHue lightness={lightnessSlider} chroma={maxChromaForLightnessSlider} />
+
+### The Quest for Uniformity
+
+The OKLCH color space stands out because it is designed to be perceptually uniform. It is a
+cylindrical transformation of the CIELAB color space, which is itself designed around human
+vision. This means colors in OKLCH are spaced in a way that corresponds more closely to how we
+perceive differences in color. This uniformity makes OKLCH an excellent choice for creating color
+palettes that are consistent and harmonious across a range of hues.
+
+OKLCH colorspace is defined by three parameters: lightness, chroma, and hue. Lightness is the
+perceived brightness of the color, while chroma is the colorfulness of the color. Hue is the
+attribute that distinguishes one color from another. The OKLCH color space has boundaries beyond
+which colors can not be displayed. Because of this property, we can not simply divide the
+colorspace into equal intervals to create a palette. Instead, we need to select lightness and
+chroma values that allow for a broad spectrum of colors to be displayed.
+
+### Selecting Lightness and Chroma Values
+
+The idea is simple. For a given lightness in OkLCH colorspace, we can find a maximum chroma value
+where the entire hue range has displayable colors. This maximum chroma value is different for each
+lightness value and needs to be calculated. I used the following code ([deno](https://deno.land/) inside a Jupyter notebook) to map lightness to maximum chroma values. There might be an easier way
+to do this, but the following works:
+
+<CodeDisplay code={data.codeMapper} language="javascript" header="mapper.ts" />
+
+### Creating a Palette with consistent Lightness (and Chroma) while varying Hue
+
+Using the above code we can get a mapping of lightness to maximum chroma values. This mapping can
+be used to create a palette of colors that are perceptually uniform. The following code uses the
+mapping to create a palette of colors (in Svelte):
+
+<CodeDisplay code={data.codePaletteHue} header="paletteHue.svelte" />
+
+Using the above component, we can construct a slider to select lightness and see the palette of
+colors that can be displayed at that lightness value. I would expect a consistent palette of
+uniform colors to be displayed as I move the slider. Let's see if that's the case.
+
+<Label>
+	Lightness: {lightnessSlider.toFixed(4)}, Chroma: {maxChromaForLightnessSlider.toFixed(4)}
+</Label>
+<Range id="lightness" min="0" max="1" bind:value={lightnessSlider} step={0.0001} />
+<Range
+	id="lightness-chroma"
+	min="0"
+	max={maxAvailableChromaForLightnessSlider}
+	bind:value={maxChromaForLightnessSlider}
+	step={0.0001}
+/>
+
+<PaletteHue lightness={lightnessSlider} chroma={maxChromaForLightnessSlider} />
+
+### Creating a Palette with consistent Hue (and Chroma) while varying Lightness
+
+What if we want to keep the hue constant and only vary the lightness to display the color at
+different brightness? A slight modification of the <code>PaletteHue</code> component gives us:
+
+<CodeDisplay code={data.codePaletteLightness} header="paletteLightness.svelte" />
+
+<Label>Hue: {hueSlider.toFixed(2)}, Chroma: {maxChromaForHueSlider.toFixed(4)}</Label>
+<Range id="hue" min="0" max="360" bind:value={hueSlider} step={0.01} />
+<Range
+	id="hue-chroma"
+	min="0"
+	max={maxAvailableChroma}
+	bind:value={maxChromaForHueSlider}
+	step={0.0001}
+/>
+<PaletteLightness hue={hueSlider} chroma={maxChromaForHueSlider} />
+
+### Conclusion
+
+OKLCH color space is a great alternative to HSL for creating color palettes that are perceptually
+uniform. The above examples show how we can use the OKLCH color space to create a palette of
+colors that are consistent and harmonious across a range of hues and lightness values. The
+perceptual uniformity of the OKLCH color space makes it an excellent choice for creating color
+palettes that are visually appealing and coherent.

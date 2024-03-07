@@ -4,7 +4,7 @@
 	import { Range, Label, Helper } from 'flowbite-svelte';
 
 	import './style.scss';
-	import Notes from './components/notes.svelte';
+	import Notes from './components/notes.svx';
 	import Drawer from './components/drawer.svelte';
 	import Palette from './components/palette.svelte';
 	import { Color, toggleDarkMode, CONTRAST_THRESHOLD } from './lib/colors';
@@ -68,6 +68,16 @@
 		}
 	});
 </script>
+
+<svelte:head>
+	<title>Generating Color Schemes using OKLCH colorspace | Nikhil Gupta</title>
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Generating Color Schemes using OKLCH colorspace" />
+	<meta
+		property="description"
+		content="A tool to generate uniform color schemes using OKLCH colorspace"
+	/>
+</svelte:head>
 
 <h2 class="post-title">Generating Color Schemes using OKLCH colorspace</h2>
 
@@ -214,6 +224,9 @@
 
 <hr />
 
-<Notes />
+<div class="mt-8">
+	<Notes />
+</div>
+
 <Drawer {hideHelp} />
 <svelte:window on:keydown={onKeyDown} />

@@ -19,7 +19,9 @@
 	<slot />
 </main>
 
-<footer>
+<hr />
+
+<footer class="mt-4">
 	<span>I am available on:</span>
 	<a href="mailto:me+web@nikhgupta.com" target="_blank">Email</a>
 	<a href="https://github.com/nikhgupta" target="_blank">Github</a> and
