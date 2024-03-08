@@ -1,10 +1,9 @@
 <script lang="ts">
 	export let path: string;
 	import { loadFile } from '$lib/importers/mdsvex';
-	import { onMount } from 'svelte';
 
 	let code: string;
-	onMount(() => loadFile(path, (data) => (code = data)));
+	loadFile(path, (data) => (code = data));
 
 	export let language: string = 'svelte';
 	export let header: string = path.split('/').at(-1) || '';

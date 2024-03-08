@@ -1,5 +1,3 @@
-// mapper.ts
-
 // @ts-ignore
 import { readJsonSync, writeJsonSync } from 'https://deno.land/std@0.52.0/fs/mod.ts';
 

@@ -68,7 +68,7 @@ where the entire hue range has displayable colors. This maximum chroma value is 
 lightness value and needs to be calculated. I used the following code ([deno](https://deno.land/) inside a Jupyter notebook) to map lightness to maximum chroma values. There might be an easier way
 to do this, but the following works:
 
-<CodeFromFile path="src/posts/uniform-colors-oklch/mapper.ts" />
+<CodeFromFile path="src/posts/uniform-colors-oklch/mapper.ts" language="typescript" />
 
 ### Creating a Palette with consistent Lightness (and Chroma) while varying Hue
 
