@@ -18,5 +18,5 @@ export function loadSingularContentFrom(name: string) {
 }
 
 export function loadFile(filepath: string, cb: (text: string) => void) {
-	import(/* @vite-ignore */ `../../../${filepath}?raw`).then((file) => cb(file.default));
+	import(/* @vite-ignore */ `../../${filepath}?raw`).then((file) => cb(file.default));
 }
