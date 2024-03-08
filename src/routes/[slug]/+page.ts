@@ -1,2 +1,2 @@
-import { loadTaxonomy } from '$lib';
-export const load = loadTaxonomy('pages');
+import { loadSingularContentFrom } from '$lib';
+export const load = loadSingularContentFrom('pages');

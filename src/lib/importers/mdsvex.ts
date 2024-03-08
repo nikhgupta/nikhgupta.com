@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-export function loadTaxonomy(name: string) {
+export function loadSingularContentFrom(name: string) {
 	return async function load({ params }: { params: { slug: string } }) {
 		try {
 			const post = await import(`../../../src/${name}/${params.slug}.svx`);
