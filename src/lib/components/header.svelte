@@ -13,11 +13,11 @@
 			<NavBrand href="/" class="no-underline logo font-shalimar h1 justify-center flex">
 				<span>Nikhil Gupta</span>
 				{#if activeUrl.includes('/posts')}
-					<span class="text-4xl ml-8 mt-2 hidden md:block">writes seldomly.</span>
+					<span class="text-4xl mx-8 hidden md:block">writes seldomly.</span>
 				{:else if activeUrl.includes('/resume')}
-					<span class="text-4xl ml-8 mt-2 hidden md:block">being a professional.</span>
+					<span class="text-4xl mx-8 hidden md:block">being a professional.</span>
 				{:else if activeUrl.includes('/tools')}
-					<span class="text-4xl ml-8 mt-2 hidden md:block">created a stupid tool.</span>
+					<span class="text-4xl mx-8 hidden md:block">created a stupid tool.</span>
 				{/if}
 			</NavBrand>
 		{/if}
