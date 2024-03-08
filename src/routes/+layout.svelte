@@ -17,7 +17,7 @@
 		const html = document.documentElement;
 		dim = [html.offsetWidth, html.offsetHeight];
 		darkMode = html.classList.contains('dark');
-		sketch = HomeSketch.run({ darkMode, frameRate: 0.2 });
+		sketch = HomeSketch.run({ darkMode, frameRate: 0 });
 	}
 
 	onMount(() => {

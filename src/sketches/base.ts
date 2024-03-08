@@ -106,4 +106,8 @@ export class P5Sketch {
 	fgColor() {
 		return this.darkMode ? this.colors[0] : this.colors[1];
 	}
+
+	sineWave(p5: p5, { steps = 4 } = {}) {
+		return (1 + Math.sin(p5.frameCount / steps)) / 2;
+	}
 }
