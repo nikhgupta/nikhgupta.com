@@ -10,29 +10,32 @@ export interface P5SketchArguments {
 	invert?: boolean;
 	darkMode?: boolean;
 	size?: [number, number] | null;
+	frameRate?: number;
 }
 
 export class P5Sketch {
 	size: [number, number] | null;
-	width: number | null;
-	height: number | null;
-	bgColor: string;
-	fgColor: string;
+	width: number;
+	height: number;
+	colors: string[];
 	target: string;
+	darkMode: boolean;
+	frameRate: number;
 
 	constructor({
 		colors = ['#f3f8ff', '#121f32'],
 		target = 'main-wrapper',
 		darkMode = false,
-		size = null
+		size = null,
+		frameRate = 0
 	}: P5SketchArguments) {
 		this.size = size;
-		[this.width, this.height] = size ? size : [null, null];
-		console.log(size);
+		[this.width, this.height] = size ? size : [0, 0];
 
 		this.target = target;
-		this.bgColor = darkMode ? colors[1] : colors[0];
-		this.fgColor = darkMode ? colors[0] : colors[1];
+		this.darkMode = darkMode;
+		this.colors = colors;
+		this.frameRate = frameRate;
 	}
 
 	static run(params: P5SketchArguments) {
@@ -51,13 +54,13 @@ export class P5Sketch {
 			const el = document.getElementById(this.target);
 			if (el) {
 				const br = el.getBoundingClientRect();
-				if (!this.width) {
+				if (this.width == 0) {
 					this.width = window.innerWidth - br.width - 2 * br.x;
 				} else if (this.width <= 1) {
 					this.width = br.width * this.width;
 				}
 
-				if (!this.height) {
+				if (this.height == 0) {
 					this.height = window.innerHeight;
 				} else if (this.height <= 1) {
 					this.height = br.height * this.height;
@@ -65,22 +68,25 @@ export class P5Sketch {
 			}
 		}
 
-		if (!this.width || !this.height) {
+		if (this.width == 0 || this.height == 0) {
 			[this.width, this.height] = [window.innerWidth, window.innerHeight];
 		}
 
+		if (this.frameRate > 0) p5.frameRate(this.frameRate);
 		p5.createCanvas(this.width, this.height);
 		this.onSetup(p5);
 	}
 
 	draw(p5: p5) {
+		if (this.frameRate == 0) p5.noLoop();
+
 		this.onDraw(p5);
 	}
 
 	beforeSetup(p5: p5) {}
 
 	onSetup(p5: p5) {
-		p5.background(this.bgColor);
+		p5.background(this.darkMode ? this.colors[1] : this.colors[0]);
 	}
 
 	onDraw(p5: p5) {
@@ -91,5 +97,13 @@ export class P5Sketch {
 
 		p5.strokeWeight(1);
 		p5.line(0, 0, v.x, v.y);
+	}
+
+	bgColor() {
+		return this.darkMode ? this.colors[1] : this.colors[0];
+	}
+
+	fgColor() {
+		return this.darkMode ? this.colors[0] : this.colors[1];
 	}
 }

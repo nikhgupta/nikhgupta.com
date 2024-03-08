@@ -1,16 +1,29 @@
 <script lang="ts">
 	import '../app.scss';
 	import 'highlight.js/styles/nord.css';
-	import { Header, Footer } from '$lib';
+	import { Header, Footer, utils } from '$lib';
 
 	import { page } from '$app/stores';
 	$: activeUrl = $page.url.pathname;
 
 	import { onMount } from 'svelte';
 	import P5Element, { HomeSketch } from '../sketches/home';
-	const sketch = HomeSketch.run({ darkMode: false });
+
+	let darkMode = false;
+	let sketch: any = null;
+	let dim: [number, number] = [0, 0];
+
+	function onResize() {
+		const html = document.documentElement;
+		dim = [html.offsetWidth, html.offsetHeight];
+		darkMode = html.classList.contains('dark');
+		sketch = HomeSketch.run({ darkMode, frameRate: 0.2 });
+	}
 
 	onMount(() => {
+		onResize();
+		window.addEventListener('resize', utils.debounce(onResize, 100));
+
 		const body = document.querySelector('body');
 		if (body) {
 			body.classList.add('!w-full');
@@ -18,6 +31,7 @@
 
 		return () => {
 			if (body) body.classList.remove('!w-full');
+			window.removeEventListener('resize', onResize);
 		};
 	});
 </script>
@@ -41,6 +55,6 @@
 	</div>
 
 	<div id="global-sketch" class="hidden xl:flex xl:shrink-0 justify-center items-center">
-		<P5Element {sketch} />
+		{#key dim}{#if sketch}<P5Element {sketch} />{/if}{/key}
 	</div>
 </div>

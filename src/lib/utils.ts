@@ -24,3 +24,17 @@ export const toggleDarkMode = (mode: number = -1) => {
 		}
 	}
 };
+
+export function debounce(func: any, wait: number) {
+	let timeout: any;
+
+	return function executedFunction(...args: any) {
+		// @ts-ignore
+		const context = this;
+		clearTimeout(timeout);
+
+		timeout = setTimeout(() => {
+			func.apply(context, args);
+		}, wait);
+	};
+}
