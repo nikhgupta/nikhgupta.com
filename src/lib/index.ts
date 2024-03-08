@@ -5,9 +5,9 @@ import { loadTaxonomy } from './importers/mdsvex';
 
 import Header from './components/header.svelte';
 import Footer from './components/footer.svelte';
-import CodeDisplay from './components/codeDisplay.svelte';
+import CodeFromFile from './components/codeFromFile.svelte';
 
 import type * as types from './types';
 
-export { MdsvexComponent, loadTaxonomy, utils, CodeDisplay, Header, Footer };
+export { MdsvexComponent, loadTaxonomy, utils, CodeFromFile, Header, Footer };
 export type { types };

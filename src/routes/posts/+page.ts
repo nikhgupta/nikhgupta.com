@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import type { types } from '$lib';
 
 function safeCompareDates(a: types.Post, b: types.Post) {
@@ -30,7 +29,6 @@ async function getPosts() {
 	return posts.sort(safeCompareDates);
 }
 
-export async function GET() {
-	const posts = await getPosts();
-	return json(posts);
+export async function load({}) {
+	return { posts: await getPosts() };
 }

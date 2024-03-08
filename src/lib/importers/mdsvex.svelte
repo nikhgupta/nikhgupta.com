@@ -28,7 +28,7 @@
 	<hgroup>
 		<h1>{data.metadata.title}</h1>
 		{#if data.metadata.date}
-			<p>Published at {utils.formatDate(data.metadata.date)}</p>
+			<p class="text-hint">Published on {utils.formatDate(data.metadata.date)}</p>
 		{/if}
 	</hgroup>
 

@@ -5,26 +5,15 @@ published: true
 date: '2024-03-05'
 ---
 
-<!--
-FIXME: svelte:head is needed because we are using +page.server.ts,
-and therefore, this post can not reside inside /src/posts.
-This, also, means that the layout `mdsvex` is not being applied.
--->
-<svelte:head>
-	<title>{title} | Nikhil Gupta</title>
-	<meta property="description" content={description} />
-</svelte:head>
-
 <script lang="ts">
 	import { Range, Label } from 'flowbite-svelte';
-	import { CodeDisplay } from '$lib';
+	import {CodeFromFile} from '$lib';
 	import { lchChromaMap } from '$lib/store'
 	const map: Record<number, number> = $lchChromaMap;
 
 	import PaletteHue from './paletteHue.svelte';
 	import PaletteLightness from './paletteLightness.svelte';
 
-	export let data;
 	let hueSlider = 27.33;
 	let maxChromaForHueSlider = 0.04;
 	let maxAvailableChroma = 0.1275;
@@ -32,8 +21,6 @@ This, also, means that the layout `mdsvex` is not being applied.
 	$: maxChromaForLightnessSlider = map[lightnessSlider];
 	$: maxAvailableChromaForLightnessSlider = map[lightnessSlider];
 </script>
-
-# Exploring Uniform Colors in OKLCH color space
 
 In the pursuit of designing visually appealing and coherent interfaces, the choice of color
 palettes plays a pivotal role. Traditionally, many developers, including myself, have relied on
@@ -81,7 +68,7 @@ where the entire hue range has displayable colors. This maximum chroma value is 
 lightness value and needs to be calculated. I used the following code ([deno](https://deno.land/) inside a Jupyter notebook) to map lightness to maximum chroma values. There might be an easier way
 to do this, but the following works:
 
-<CodeDisplay code={data.codeMapper} language="javascript" header="mapper.ts" />
+<CodeFromFile path="src/posts/uniform-colors-oklch/mapper.ts" />
 
 ### Creating a Palette with consistent Lightness (and Chroma) while varying Hue
 
@@ -89,7 +76,7 @@ Using the above code we can get a mapping of lightness to maximum chroma values.
 be used to create a palette of colors that are perceptually uniform. The following code uses the
 mapping to create a palette of colors (in Svelte):
 
-<CodeDisplay code={data.codePaletteHue} header="paletteHue.svelte" />
+<CodeFromFile path="src/posts/uniform-colors-oklch/paletteHue.svelte" />
 
 Using the above component, we can construct a slider to select lightness and see the palette of
 colors that can be displayed at that lightness value. I would expect a consistent palette of
@@ -114,7 +101,7 @@ uniform colors to be displayed as I move the slider. Let's see if that's the cas
 What if we want to keep the hue constant and only vary the lightness to display the color at
 different brightness? A slight modification of the <code>PaletteHue</code> component gives us:
 
-<CodeDisplay code={data.codePaletteLightness} header="paletteLightness.svelte" />
+<CodeFromFile path="src/posts/uniform-colors-oklch/paletteLightness.svelte" />
 
 <Label>Hue: {hueSlider.toFixed(2)}, Chroma: {maxChromaForHueSlider.toFixed(4)}</Label>
 <Range id="hue" min="0" max="360" bind:value={hueSlider} step={0.01} />
