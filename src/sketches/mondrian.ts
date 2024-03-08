@@ -16,7 +16,7 @@ export class MondrianSketch extends P5Sketch {
 
 	beforeSetup(p5: p5) {
 		this.drawColors = [
-			p5.color(255, 255, 255),
+			p5.color(this.bgColor()),
 			p5.color(255, 0, 0),
 			p5.color(255, 255, 0),
 			p5.color(0, 0, 255)
@@ -25,7 +25,7 @@ export class MondrianSketch extends P5Sketch {
 
 	onSetup(p5: p5) {
 		p5.frameRate(0.25);
-		p5.background(this.fgColor);
+		p5.background(this.fgColor());
 		this.onDraw(p5);
 	}
 
