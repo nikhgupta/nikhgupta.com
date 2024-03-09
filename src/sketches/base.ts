@@ -51,25 +51,26 @@ export class P5Sketch {
 	setup(p5: p5) {
 		this.beforeSetup(p5);
 		if (browser) {
+			const html = document.documentElement;
 			const el = document.getElementById(this.target);
 			if (el) {
 				const br = el.getBoundingClientRect();
 				if (this.width == 0) {
-					this.width = window.innerWidth - br.width - 2 * br.x;
+					this.width = html.scrollWidth - br.width - 2 * br.x;
 				} else if (this.width <= 1) {
 					this.width = br.width * this.width;
 				}
 
 				if (this.height == 0) {
-					this.height = window.innerHeight;
+					this.height = html.scrollHeight;
 				} else if (this.height <= 1) {
 					this.height = br.height * this.height;
 				}
 			}
-		}
 
-		if (this.width == 0 || this.height == 0) {
-			[this.width, this.height] = [window.innerWidth, window.innerHeight];
+			if (this.width == 0 || this.height == 0) {
+				[this.width, this.height] = [html.scrollWidth, html.scrollHeight];
+			}
 		}
 
 		if (this.frameRate > 0) p5.frameRate(this.frameRate);

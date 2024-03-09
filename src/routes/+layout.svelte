@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
+	$: activeUrl = $page.url.pathname;
+
 	import '../app.scss';
 	import 'highlight.js/styles/nord.css';
 	import { Header, Footer, utils } from '$lib';
-
-	import { page } from '$app/stores';
-	$: activeUrl = $page.url.pathname;
 
 	import { onMount } from 'svelte';
 	import P5Element, { HomeSketch } from '../sketches/home';
@@ -20,18 +21,19 @@
 		sketch = HomeSketch.run({ darkMode, frameRate: 0 });
 	}
 
-	onMount(() => {
-		onResize();
-		window.addEventListener('resize', utils.debounce(onResize, 100));
+	$: $page.url.pathname && browser && onResize();
 
-		const body = document.querySelector('body');
-		if (body) {
-			body.classList.add('!w-full');
+	onMount(() => {
+		if (browser) {
+			window.addEventListener('resize', utils.debounce(onResize, 100));
+			document.body.classList.add('!w-full');
 		}
 
 		return () => {
-			if (body) body.classList.remove('!w-full');
-			window.removeEventListener('resize', onResize);
+			if (browser) {
+				document.body.classList.remove('!w-full');
+				window.removeEventListener('resize', onResize);
+			}
 		};
 	});
 </script>
