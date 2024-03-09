@@ -22,7 +22,7 @@ export async function getPosts() {
 		if (file && typeof file === 'object' && 'metadata' in file && slug) {
 			const metadata = file.metadata as Omit<types.Post, 'slug'>;
 			const post = { ...metadata, slug } satisfies types.Post;
-			post.published && posts.push(post);
+			(import.meta.env.DEV ? true : post.published) && posts.push(post);
 		}
 	}
 

@@ -41,7 +41,7 @@
 <div class="flex">
 	<div
 		id="main-wrapper"
-		class="mx-8 md:mx-16 xl:mx-24 flex flex-col h-screen max-w-5xl xl:min-w-5xl"
+		class="px-8 md:px-16 xl:px-24 flex flex-col h-screen w-full lg:max-w-6xl xl:min-w-6xl"
 	>
 		<Header />
 

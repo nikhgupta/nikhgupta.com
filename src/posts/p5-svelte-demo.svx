@@ -11,7 +11,7 @@ color: cadetblue
 
 <script lang="ts">
 	import P5Element, { HomeSketch } from '../sketches/home';
-	const sketch = HomeSketch.run({ darkMode: false, size: [1.0, 320]});
+	const sketch = HomeSketch.run({ darkMode: false, size: [1.0, 600]});
 </script>
 
 ## hello

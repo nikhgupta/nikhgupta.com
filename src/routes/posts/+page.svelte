@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { utils } from '$lib';
+	import { Badge } from 'flowbite-svelte';
 
 	export let data;
 </script>
@@ -15,8 +16,9 @@
 			<ul class="posts list-none">
 				{#each data.posts as post}
 					<li class="post mb-4">
-						<small class="mr-3">on {utils.formatDate(post.date)}</small><br />
+						<small class="mr-3">on {utils.formatDate(post.date)}</small> <br />
 						<a href="/posts/{post.slug}" class="title">{post.title}</a>
+						{#if !post.published}<Badge color="red" class="ml-1">Draft</Badge>{/if}
 					</li>
 				{/each}
 			</ul>
