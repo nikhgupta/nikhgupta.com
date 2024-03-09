@@ -35,7 +35,6 @@ export class CircleSketch extends P5Sketch {
 		lchChromaMap.subscribe((value) => (this.map = value));
 
 		this.currentHue = Math.round(Math.random() * 360);
-		console.log('initialized');
 	}
 
 	onDraw(p5: p5) {
@@ -60,7 +59,6 @@ export class CircleSketch extends P5Sketch {
 		const n = Math.round(Math.pow(this.height * this.width, 0.15 + m * 0.05));
 		const color: Color = Color.fromRgb(this.bgColor()) || Color.fromRandom();
 		const drawColor = color.transform({ h: this.currentHue + p5.frameCount });
-		console.log(drawColor.h, p5.frameCount);
 
 		const palette = Array.from({ length: 16 }, (x, i) => {
 			let l = (this.darkMode ? 0.25 : 0.75) + p5.random(98) / 400;

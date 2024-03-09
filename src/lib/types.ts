@@ -7,3 +7,9 @@ export type Post = {
 	published?: boolean;
 	keywords?: string;
 };
+
+export type PageData = {
+	content: ConstructorOfATypedSvelteComponent;
+	metadata: Record<string, any>;
+	snippets: Record<string, string>;
+};

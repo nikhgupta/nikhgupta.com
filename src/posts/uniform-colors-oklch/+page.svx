@@ -7,7 +7,6 @@ date: '2024-03-05'
 
 <script lang="ts">
 	import { Range, Label } from 'flowbite-svelte';
-	import {CodeFromFile} from '$lib';
 	import { lchChromaMap } from '$lib/store'
 	const map: Record<number, number> = $lchChromaMap;
 
@@ -68,7 +67,71 @@ where the entire hue range has displayable colors. This maximum chroma value is 
 lightness value and needs to be calculated. I used the following code ([deno](https://deno.land/) inside a Jupyter notebook) to map lightness to maximum chroma values. There might be an easier way
 to do this, but the following works:
 
-<CodeFromFile path="src/posts/uniform-colors-oklch/mapper.ts" language="typescript" />
+```ts
+// @ts-ignore
+import { readJsonSync, writeJsonSync } from 'https://deno.land/std@0.52.0/fs/mod.ts';
+
+// @ts-ignore
+import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'npm:culori/fn';
+
+const rgb = useMode(modeRgb);
+const oklch = useMode(modeOklch);
+
+const oklchToRgb = function (l: number, c: number, h: number) {
+	const color = rgb(oklch({ l: l, c: c, h: h }));
+	if (displayable(color)) return formatHex(color);
+};
+
+const hr = Array.from({ length: 360 }, (_, i) => i);
+const cr = Array.from({ length: 4000 }, (_, i) => i / 10000);
+const lr = Array.from({ length: 10000 }, (_, i) => 1 - i / 10000);
+
+const invalidHue = function (l: number, c: number) {
+	for (let h of hr) {
+		const color = oklchToRgb(l, c, h);
+		if (!color) return [l, c, h];
+	}
+	return [];
+};
+
+// we should be able to speed this up using bisection,
+// but that would not give optimal results.
+// Moreover, the calculation will be cached, anyway.
+const maxChroma = function (l: number) {
+	let prev = 0;
+	for (let c of cr) {
+		const invalid = invalidHue(l, c);
+		if (invalid.length > 0) {
+			return [prev, invalid];
+		}
+		prev = c;
+	}
+};
+
+const cachedLCMap = function (path: string) {
+	const mappedLC = function () {
+		const map = {};
+		for (let l of lr) {
+			const res = maxChroma(l);
+			// @ts-ignore
+			const ls = Math.round(parseFloat(l) * 10000) / 10000;
+			// @ts-ignore
+			map[ls] = res.length > 0 ? res[0] : 0;
+		}
+		return map;
+	};
+
+	let map = readJsonSync(path, 'utf8');
+	if (map && Object.entries(map).length > 0) return map;
+
+	console.log('caculating boundaries..');
+	map = mappedLC();
+	writeJsonSync(path, map, 'utf8');
+	return map;
+};
+
+const map: { [key: number]: number } = cachedLCMap('../src/routes/colors/mapping.json');
+```
 
 ### Creating a Palette with consistent Lightness (and Chroma) while varying Hue
 
@@ -76,7 +139,26 @@ Using the above code we can get a mapping of lightness to maximum chroma values.
 be used to create a palette of colors that are perceptually uniform. The following code uses the
 mapping to create a palette of colors (in Svelte):
 
-<CodeFromFile path="src/posts/uniform-colors-oklch/paletteHue.svelte" />
+```svelte
+<script context="module" lang="ts">  
+	import { lchChromaMap } from '$lib/store';
+</script>
+
+<script lang="ts">
+	export let lightness: number;
+	export let chroma: number = -1;
+
+	const map: Record<number, number> = $lchChromaMap;
+	const hr = Array.from({ length: 100 }, (x, i) => i * 3.6);
+	chroma = chroma > 0 ? chroma : map[lightness];
+</script>
+
+<div class="flex mb-8">
+	{#each hr as h}
+		<div class="w-12 h-12" style="background-color: oklch({lightness * 100}%, {chroma}, {h})"></div>
+	{/each}
+</div>
+```
 
 Using the above component, we can construct a slider to select lightness and see the palette of
 colors that can be displayed at that lightness value. I would expect a consistent palette of
@@ -101,7 +183,28 @@ uniform colors to be displayed as I move the slider. Let's see if that's the cas
 What if we want to keep the hue constant and only vary the lightness to display the color at
 different brightness? A slight modification of the <code>PaletteHue</code> component gives us:
 
-<CodeFromFile path="src/posts/uniform-colors-oklch/paletteLightness.svelte" />
+```svelte
+<script context="module" lang="ts">
+	import { lchChromaMap } from '$lib/store';
+</script>
+
+<script lang="ts">
+	export let hue: number;
+	export let chroma: number = 0.04;
+
+	const map: Record<number, number> = $lchChromaMap;
+	const lr = Array.from({ length: 198 }, (x, i) => (i + 1) / 200);
+</script>
+
+<div class="flex mt-4 mb-8">
+	{#each lr as l}
+		<div
+			class="w-12 h-12"
+			style="background-color: oklch({l * 100}%, {map[l] > chroma ? chroma : map[l]}, {hue})"
+		></div>
+	{/each}
+</div>
+```
 
 <Label>Hue: {hueSlider.toFixed(2)}, Chroma: {maxChromaForHueSlider.toFixed(4)}</Label>
 <Range id="hue" min="0" max="360" bind:value={hueSlider} step={0.01} />

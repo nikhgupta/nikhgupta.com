@@ -1,7 +1,10 @@
+<script context="module" lang="ts">
+	import { lchChromaMap } from '$lib/store';
+</script>
+
 <script lang="ts">
 	export let hue: number;
 	export let chroma: number = 0.04;
-	import { lchChromaMap } from '$lib/store';
 
 	const map: Record<number, number> = $lchChromaMap;
 	const lr = Array.from({ length: 198 }, (x, i) => (i + 1) / 200);

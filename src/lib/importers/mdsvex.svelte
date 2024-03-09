@@ -2,10 +2,7 @@
 	import { utils } from '$lib';
 	import type { types } from '$lib';
 
-	export let data: {
-		metadata: Omit<types.Post, 'slug'>;
-		content: ConstructorOfATypedSvelteComponent;
-	};
+	export let data: types.PageData;
 
 	let keywords = data.metadata.keywords;
 	if (!keywords && data.metadata.categories) keywords = data.metadata.categories.join(', ');
@@ -45,6 +42,6 @@
 
 	<!-- Post -->
 	<div class="prose">
-		<svelte:component this={data.content} />
+		<svelte:component this={data.content} snippets={data.snippets} />
 	</div>
 </article>

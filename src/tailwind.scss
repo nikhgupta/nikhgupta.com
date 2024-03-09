@@ -39,7 +39,7 @@
   }
 
   code {
-    @apply text-red-400 font-bold;
+    @apply text-red-400;
   }
 
   a {
@@ -90,6 +90,10 @@
 
   .max-w-128 {
     max-width: 32rem;
+  }
+
+  .max-h-128 {
+    max-height: 32rem;
   }
 
   .text-hint {

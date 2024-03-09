@@ -6,9 +6,8 @@ import * as posts from './importers/posts';
 
 import Header from './components/header.svelte';
 import Footer from './components/footer.svelte';
-import CodeFromFile from './components/codeFromFile.svelte';
 
 import type * as types from './types';
 
-export { MdsvexComponent, loadSingularContentFrom, utils, posts, CodeFromFile, Header, Footer };
+export { MdsvexComponent, loadSingularContentFrom, utils, posts, Header, Footer };
 export type { types };
