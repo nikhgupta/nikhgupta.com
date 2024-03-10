@@ -1,0 +1,7 @@
+---
+title: Open Tasks
+---
+
+- [ ] Complete the post: [Getting Real - What I learned from 37Signals](/posts/getting-real)
+- [ ] Complete pending features in [OKLCH color palette generator](/tools/palette-generator)
+- [ ] Populate task list on website from TickTick (consider a tag to use for this purpose).

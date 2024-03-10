@@ -35,3 +35,11 @@ html.dark .shiki span {
 	font-weight: var(--shiki-dark-font-weight) !important;
 	text-decoration: var(--shiki-dark-text-decoration) !important;
 }
+
+ul.contains-task-list {
+	@apply list-none;
+
+	li.task-list-item {
+		@apply flex items-center gap-x-2;
+	}
+}
