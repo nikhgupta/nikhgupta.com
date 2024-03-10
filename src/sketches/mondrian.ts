@@ -32,11 +32,11 @@ export class CurrentSketch extends P5Sketch {
 		var currHeight = p5.random(this.sizes);
 		var currWidth = p5.random(this.sizes);
 
-		while (y < this.height) {
+		while (y < this.dim[1]) {
 			x = 0;
-			while (x < this.width) {
+			while (x < this.dim[0]) {
 				p5.fill(p5.random(this.drawColors));
-				p5.rect(x, y, Math.min(currWidth, this.width - x), Math.min(currHeight, this.height - y));
+				p5.rect(x, y, Math.min(currWidth, this.dim[0] - x), Math.min(currHeight, this.dim[1] - y));
 				x = x + currWidth;
 				currWidth = p5.random(this.sizes);
 			}

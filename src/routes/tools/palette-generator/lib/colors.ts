@@ -111,8 +111,9 @@ export class Color {
 		return this.transform({ h: h % 360 });
 	}
 
-	_transformLightness(l: number, h: number | null = null) {
-		return this.transform({ l, c: this.c, h: h ? h : this.h });
+	_transformLightness(l: number, h: number | null = null, maxChroma: boolean = false) {
+		const c = maxChroma ? this.maxChromaFor(l) : this.c;
+		return this.transform({ l, c: c, h: h ? h : this.h });
 	}
 
 	hueSwatch(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {
@@ -129,13 +130,16 @@ export class Color {
 		minLight: number = MIN_LIGHT,
 		maxLight: number = MAX_LIGHT,
 		h: number = this.h,
-		reversed: boolean = true
+		reversed: boolean = true,
+		maxChroma: boolean = false
 	) {
 		const colors = [];
 		if (num == 1) return [this._transformHue(h)];
 		const d = (maxLight - minLight) / (num - 1);
 		for (let i = 0; i < num; i++) {
-			colors.push(this._transformLightness(reversed ? maxLight - i * d : minLight + i * d, h));
+			colors.push(
+				this._transformLightness(reversed ? maxLight - i * d : minLight + i * d, h, maxChroma)
+			);
 		}
 		return colors;
 	}
