@@ -61,7 +61,7 @@ export class P5Sketch {
 		this.chromaMap = [];
 		lchChromaMap.subscribe((value) => (this.chromaMap = value));
 
-		this.startingHue = hue != null ? hue : Math.round(Math.random() * 360);
+		this.startingHue = hue != null ? hue : this.randomStartingHueAsPerBackground();
 		this.startingColor = this.pickStartingColor({ from: this.bgColor() });
 	}
 
@@ -125,6 +125,14 @@ export class P5Sketch {
 		return (1 + Math.sin(p5.frameCount / steps)) / 2;
 	}
 
+	randomStartingHueAsPerBackground() {
+		if (this.darkMode) return Math.random() * 60 + 220;
+
+		let r = Math.random() * 360;
+		while ((r > 90 && r < 150) || r > 300) r = Math.random() * 360;
+		return r;
+	}
+
 	setDimensions() {
 		if (!browser) return;
 
@@ -150,7 +158,7 @@ export class P5Sketch {
 		}
 	}
 
-	pickStartingColor({ from = null }: { from: string | Color | null }) {
+	pickStartingColor({ from = null }: { from?: string | Color | null } = {}) {
 		let color: Color = Color.fromRandom();
 
 		if (from && typeof from === 'string') {
@@ -173,6 +181,10 @@ export class P5Sketch {
 		const minLight = this.darkMode ? lightness[1] : lightness[0];
 		const color = this.currentColor(p5);
 		return color.lightnessSwatch(size, minLight, minLight + 0.2, color.h, false, true);
+	}
+
+	huePalette(p5: p5, { size = 12 }: { size?: number } = {}) {
+		return this.currentColor(p5).hueSwatch(size, 360 / size);
 	}
 
 	chance(
