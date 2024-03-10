@@ -1,0 +1,120 @@
+---
+title: Getting Real - What I Learned from 37signals
+description: "Getting Real is a smarter, faster, easier way to build a successful web application. It's about skipping all the stuff that doesn't matter. This article is my understanding from book Getting Real by 37signals."
+date: '2024-03-10'
+categories:
+- review
+- improvement
+published: true
+---
+
+> Start out by solving your own problems, by scratching your own itch.
+
+## Introduction
+
+Getting Real is a smarter, faster, easier way to build a successful web application. It's about skipping all the stuff that doesn't matter. This article is my understanding from book Getting Real by 37signals for the purpose of starting a business. I have tried to summarize the key points from the book and added my own thoughts to it.
+
+If you are starting a new business, I have provided a list of key considerations and questions to ask yourself at the end of each section. These questions are designed to help you think about your new business and how you can apply the concepts from Getting Real to your business.
+
+## The Idea.
+
+- **Start out by solving your own problems, by scratching your own itch.**
+- If you are solving your own problems, you will have a better understanding of the problem and the solution.
+- **Define a vision - a one-line summary of your business idea.**
+- Vision will help you make decisions, prioritize features and keep you focused.
+- **Find your app's enemy, and differentiate yourself.**
+- **Prefer to bootstrap your own business.**
+- Build less - start with a simple product that does one thing and does it well.
+- Limited resources force you to think creatively, come up with innovative solutions and avoid distractions.
+
+> The key to a successful business is to solve a problem that people care about. If you can solve a problem that people care about, you will have a successful business.
+
+Do not take outside investment unless you absolutely need it. Outside money only complicates things. It's not just the money you take, you become responsible for delivering returns to the investors in a certain time frame. This can put a lot of pressure on you and your team.
+
+- **Write a one-line summary of your business idea - the vision.**
+- What is the problem you are trying to solve? Do you have a personal experience with the problem?
+- What is the solution you are proposing?
+- Why does your product exist? What makes it different from others?
+- **Who are your target customers that share your vision of this product?**
+- If your idea requires outside investment, can we adjust it so that it can be bootstrapped?
+- What are the constraints you have when starting this business?
+- How can you use the constraints above to your advantage?
+- **Who is your app's enemy? Why would you pick a fight with them?**
+
+## The MVP
+
+- Start with the smallest possible version of your product.
+- **Set a deadline and a budget. Never add more time or money, instead, cut features.**
+- **Prioritize features and cut the ones that do not contribute to your vision directly.**
+- **Write less code. Build the core features that solve the problem and add more features as you go.**
+- Get your product out faster and get valuable feedback from the customers earlier.
+- Do less than your competitors to beat them.
+- **The longer it takes to develop, the less likely it is to launch.**
+- Start off with a simple but great product and let it gain traction.
+
+> Figure out the absolute minimum features your app needs to work, trim the features down further, and then start building. The more you build, the less time you have to focus on what's important. Write less code, provide less features and configurations. **Get something real up and running quickly.**
+
+- **What features will you build in the first version? Can you trim down the features further?**
+- Use a team of 3 people for initial version. A designer, a programmer and a multi-tasker.
+- If you need more than 3 people, you either need different people or you need to slim down your initial version.
+
+## The Product
+
+- The leaner you are, the easier it is to change and innovate.
+- **Write less code, have less features, less configurations, less people and less meetings.**
+- **Less code means less bugs, less maintenance, less complexity, more time, and more money.**
+- Build just enough features to solve the problem. Do not build for the future.
+- **Do not waste time on problems you do not have yet**. Do not over-engineer, do not overbuild.
+- Do not think about scaling until you have scaling problems. Launch first, scale later.
+
+> Keep your product simple. Do not add more features than you need. Do not build for the future or for solving scaling problems ahead of time.
+
+## The Process
+
+- Get something real up and running quickly.
+- Work in iterations. Ship something real every period of time.
+- Take big tasks. Break them into smaller tasks.
+- Work on one task at a time. Multitasking is a myth.
+- Prioritize on the go. Work on the most important task first.
+- Build less software. Reject tasks that do not directly contribute to the vision.
+- **Be Lean. Meetings are toxic. People lead to communication overhead and slow down the decision-making process.**
+- Do not add more time or money. Cut features instead.
+- **Do not be a perfectionist. Work from the big picture to the details.**
+- Make decisions just in time. You will have more information and make better decisions.
+
+> Do not be a perfectionist. Know that you are going to revisit issues later. Let that be a motivation to roll out your ideas quickly without hesitation.
+
+The best way to get something done is to start doing it. Pick a task and start working on it. Do not wait for the perfect time or the perfect plan. Just start.
+
+## The Features
+
+- **Make features work hard to be implemented.**
+- Focus on the features that truly matter. Say no to everything else.
+- Do not add features just because your competitors have them.
+- **Read and then, ignore customer requests. If its an important feature, it will come up again.**
+- Innovation is not about saying yes to everything. It's about saying no to all but the most crucial features.
+- **Every feature is like a little child. You have to feed it, take care of it and maintain it.**
+- **Every new feature has a cost. It has to be designed, developed, tested, documented, supported and maintained.**
+
+> Every feature is like a little child. You have to feed it, take care of it and maintain it. It has a cost. It has to be designed, developed, tested, documented, supported and maintained.
+
+- Does the new feature directly contribute to your vision? If no, skip.
+- **Does the new feature change your behaviour or the behaviour of the users?** If no, skip.
+
+## The Users
+
+- **Err in favour of your users.**
+- Be personal and friendly with your customers. Communicate regularly.
+- Do not build for the masses. Find a niche and dominate it.
+
+## The Employee
+
+- **A good employee can determine what is important and what is not.**
+
+> A good employee can decipher what matters. They can make decisions on their own and do not need to be micromanaged.
+
+- Will your vision of this idea motivate employees to come back to work everyday?
+
+---
+
+**Work in Progress - I am, currently, reading the book and will update this article as I read more.**

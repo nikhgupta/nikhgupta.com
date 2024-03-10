@@ -53,6 +53,15 @@
   input[type='range'] {
     @apply mt-1 mb-3;
   }
+
+  blockquote {
+    @apply border-l-4 border-slate-500 dark:border-slate-400 pl-4 py-1 my-4;
+    @apply bg-slate-100 dark:bg-slate-900;
+  }
+
+  hr {
+    @apply my-4;
+  }
 }
 
 @tailwind components;
