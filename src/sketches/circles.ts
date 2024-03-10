@@ -3,7 +3,7 @@ import type { P5SketchArguments } from './base';
 import type { p5 } from 'p5-svelte';
 
 export default P5Element;
-export class CircleSketch extends P5Sketch {
+export class CurrentSketch extends P5Sketch {
 	constructor(params: P5SketchArguments) {
 		super(params);
 	}

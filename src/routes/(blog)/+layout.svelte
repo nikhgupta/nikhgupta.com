@@ -3,12 +3,12 @@
 	import { browser } from '$app/environment';
 	$: activeUrl = $page.url.pathname;
 
-	import '../app.scss';
+	import '../../app.scss';
 	import 'highlight.js/styles/nord.css';
 	import { Header, Footer, utils } from '$lib';
 
 	import { onMount } from 'svelte';
-	import P5Element, { HomeSketch } from '../sketches/home';
+	import P5Element, { HomeSketch } from '../../sketches/home';
 
 	let darkMode = false;
 	let sketch: any = null;

@@ -3,9 +3,10 @@ import type { p5, Sketch } from 'p5-svelte';
 import { browser } from '$app/environment';
 
 import { lchChromaMap } from '$lib/store';
-import { Color } from '../routes/tools/palette-generator/lib/colors';
+import { Color } from '../routes/(blog)/tools/palette-generator/lib/colors';
 
 export const P5Element = P5;
+export const AVAILABLE_SKETCHES = ['circles', 'squares', 'mondrian'];
 
 const hashFunction = (s: string) => {
 	var hash = 0;
@@ -73,6 +74,16 @@ export class P5Sketch {
 		};
 
 		return sketch;
+	}
+
+	static async loadAndRun(name: string, params: P5SketchArguments) {
+		const { CurrentSketch } = await import(`../sketches/${name}.ts`);
+		return CurrentSketch.run(params);
+	}
+
+	static nextSketchName(name: string) {
+		const index = AVAILABLE_SKETCHES.indexOf(name);
+		return AVAILABLE_SKETCHES[(index + 1) % AVAILABLE_SKETCHES.length];
 	}
 
 	setup(p5: p5) {

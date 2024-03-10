@@ -11,7 +11,7 @@ export function loadSingularContentFrom(name: string) {
 		} catch (e) {
 			try {
 				const post = await import(`../../../src/${name}/${params.slug}/+page.svx`);
-				return { content: post.default, metadata: post.metadata };
+				return { content: post.default, metadata: post.metadata, snippets: {} };
 			} catch (e) {
 				console.log(name, e);
 				error(404, `Could not find ${params.slug}`);
