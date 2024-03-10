@@ -6,6 +6,13 @@
 
 	let keywords = data.metadata.keywords;
 	if (!keywords && data.metadata.categories) keywords = data.metadata.categories.join(', ');
+
+	import P5Element, { CurrentSketch } from '../../sketches/mondrian';
+	const sketch = CurrentSketch.run({
+		darkMode: false,
+		size: [960, 384],
+		seed: data.metadata.title
+	});
 </script>
 
 <!-- SEO -->
@@ -45,3 +52,7 @@
 		<svelte:component this={data.content} snippets={data.snippets} />
 	</div>
 </article>
+
+<hr />
+
+<div class="my-8 min-w-[960px] min-h-[384px]"><P5Element {sketch} /></div>

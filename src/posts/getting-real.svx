@@ -8,11 +8,6 @@ categories:
 published: true
 ---
 
-<script lang="ts">
-	import P5Element, { CurrentSketch } from '../sketches/mondrian';
-	const sketch = CurrentSketch.run({ darkMode: false, size: [1024, 384], seed: title });
-</script>
-
 > Start out by solving your own problems, by scratching your own itch.
 
 ## Introduction
@@ -119,9 +114,5 @@ The best way to get something done is to start doing it. Pick a task and start w
 > A good employee can decipher what matters. They can make decisions on their own and do not need to be micromanaged.
 
 - Will your vision of this idea motivate employees to come back to work everyday?
-
----
-
-<div class="my-8"><P5Element {sketch} /></div>
 
 **Work in Progress - I am, currently, reading the book and will update this article as I read more.**
