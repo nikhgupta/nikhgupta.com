@@ -4,7 +4,7 @@ import type { p5 } from 'p5-svelte';
 import type { Color } from 'p5';
 
 export default P5Element;
-export class MondrianSketch extends P5Sketch {
+export class CurrentSketch extends P5Sketch {
 	sizes: number[];
 	drawColors: Color[];
 
@@ -23,17 +23,8 @@ export class MondrianSketch extends P5Sketch {
 		];
 	}
 
-	onSetup(p5: p5) {
-		p5.frameRate(0.25);
-		p5.background(this.fgColor());
-		this.onDraw(p5);
-	}
-
 	onDraw(p5: p5) {
-		if (!this.height) this.height = p5.windowHeight;
-		if (!this.width) this.width = p5.windowWidth;
-
-		p5.strokeWeight(10); // make lines really thick
+		p5.strokeWeight(5); // make lines really thick
 
 		var y = 0;
 		var x = 0;
@@ -45,7 +36,7 @@ export class MondrianSketch extends P5Sketch {
 			x = 0;
 			while (x < this.width) {
 				p5.fill(p5.random(this.drawColors));
-				p5.rect(x, y, currWidth, currHeight);
+				p5.rect(x, y, Math.min(currWidth, this.width - x), Math.min(currHeight, this.height - y));
 				x = x + currWidth;
 				currWidth = p5.random(this.sizes);
 			}

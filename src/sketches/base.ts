@@ -2,6 +2,17 @@ import P5 from 'p5-svelte';
 import type { p5, Sketch } from 'p5-svelte';
 import { browser } from '$app/environment';
 
+const hashFunction = (s: string) => {
+	var hash = 0;
+
+	let i: number;
+	for (i = 0; i < s.length; i++) {
+		hash = (hash << 5) - hash + s.charCodeAt(i);
+		hash = hash & hash; // prevent overflow from happening
+	}
+	return hash & 0xffff; // returns lower 16-bit of hash value
+};
+
 export const P5Element = P5;
 
 export interface P5SketchArguments {
@@ -11,6 +22,7 @@ export interface P5SketchArguments {
 	darkMode?: boolean;
 	size?: [number, number] | null;
 	frameRate?: number;
+	seed?: string | null;
 }
 
 export class P5Sketch {
@@ -21,13 +33,15 @@ export class P5Sketch {
 	target: string;
 	darkMode: boolean;
 	frameRate: number;
+	seed: number;
 
 	constructor({
 		colors = ['#f3f8ff', '#121f32'],
 		target = 'main-wrapper',
 		darkMode = false,
 		size = null,
-		frameRate = 0
+		frameRate = 0,
+		seed = null
 	}: P5SketchArguments) {
 		this.size = size;
 		[this.width, this.height] = size ? size : [0, 0];
@@ -36,6 +50,7 @@ export class P5Sketch {
 		this.darkMode = darkMode;
 		this.colors = colors;
 		this.frameRate = frameRate;
+		this.seed = seed && seed.length > 0 ? hashFunction(seed) : Math.round(Math.random() * 1000000);
 	}
 
 	static run(params: P5SketchArguments) {
@@ -49,6 +64,7 @@ export class P5Sketch {
 	}
 
 	setup(p5: p5) {
+		p5.randomSeed(this.seed);
 		this.beforeSetup(p5);
 		if (browser) {
 			const html = document.documentElement;
