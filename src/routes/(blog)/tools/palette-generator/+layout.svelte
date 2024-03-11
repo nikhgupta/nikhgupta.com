@@ -6,7 +6,7 @@
 	import Notes from './components/notes.svx';
 	import Drawer from './components/drawer.svelte';
 	import Palette from './components/palette.svelte';
-	import { Color, CONTRAST_THRESHOLD } from './lib/colors';
+	import { Color, CONTRAST_THRESHOLD } from '$lib/colors';
 	import {
 		ls,
 		hs,
@@ -37,7 +37,7 @@
 
 		e.preventDefault();
 		if (e.code === 'Space') {
-			visitColor(Color.fromRandom());
+			visitColor(color.random());
 		} else if (e.code === 'KeyX') {
 			setBaseColor(Color.default());
 			numSlider = 12;

@@ -1,19 +1,10 @@
 import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'culori/fn';
 
+import { Random, randomSeedFrom, str2hashnum } from '$lib/random';
 import { lchChromaMap } from '$lib/store';
+
 let map: Record<number, number> = {};
 lchChromaMap.subscribe((value) => (map = value));
-
-function randomBinomial() {
-	let u = 0,
-		v = 0;
-	while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
-	while (v === 0) v = Math.random();
-	let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-	num = num / 10.0 + 0.5; // Translate to 0 -> 1
-	if (num > 1 || num < 0) return randomBinomial(); // resample between 0 and 1
-	return num;
-}
 
 const BLACK = '#000';
 const WHITE = '#fff';
@@ -36,11 +27,19 @@ export class Color {
 	c: number;
 	h: number;
 	a: number;
+	r!: Random;
+	seed!: number;
 	maxChroma: number;
 	contrastColor: string;
 	originalChroma: number;
 
-	constructor(l: number, c: number, h: number, a: number = 1, clamp: boolean = true) {
+	constructor(
+		l: number,
+		c: number,
+		h: number,
+		a: number = 1,
+		{ clamp = true, seed = null }: { clamp?: boolean; seed?: number | null } = {}
+	) {
 		this.l = l;
 		this.h = h;
 		this.a = a;
@@ -51,11 +50,22 @@ export class Color {
 
 		this.contrastColor = this.l > CONTRAST_THRESHOLD ? BLACK : WHITE;
 		this.data = { mode: 'oklch', l, c: this.c, h, alpha: a };
+
+		this.setSeed(seed);
+	}
+
+	setSeed(seed: number | null = null) {
+		this.seed = seed || randomSeedFrom();
+		this.r = new Random(this.seed);
+		return this;
 	}
 
 	originalColor() {
 		if (this.originalChroma == this.c) return this;
-		return new Color(this.l, this.originalChroma, this.h, this.a, false);
+		return new Color(this.l, this.originalChroma, this.h, this.a, {
+			clamp: false,
+			seed: this.seed + 1
+		});
 	}
 
 	static default() {
@@ -71,14 +81,19 @@ export class Color {
 	static fromRgb(color: string, clamp: boolean = true) {
 		if (!displayable(color) || color.length < 6) return;
 		const lchValue = { mode: 'oklch', h: 0, l: 0, c: MIN_CHROMA, alpha: 1, ...lch(rgb(color)) };
-		return new Color(lchValue.l, lchValue.c, lchValue.h, lchValue.alpha, clamp);
+		return new Color(lchValue.l, lchValue.c, lchValue.h, lchValue.alpha, { clamp });
 	}
 
-	static fromRandom() {
-		const l = randomBinomial() / 4 + Math.random() / 2 + 0.25;
+	random() {
+		const l = this.r.binomial() / 4 + this.r.random() / 2 + 0.25;
 		let c = Color.maxChromaValueForLightness(l);
-		c = (randomBinomial() * c) / 4 + (Math.random() * c) / 2 + c / 4;
-		return new Color(l, c, Math.random() * 360);
+		c = (this.r.binomial() * c) / 4 + (this.r.random() * c) / 2 + c / 4;
+		return new Color(l, c, this.r.random() * 360);
+	}
+
+	static fromRandom(seed: number | null) {
+		const color = Color.default().setSeed(seed);
+		return color.random();
 	}
 
 	valuesAt(...keys: string[]) {

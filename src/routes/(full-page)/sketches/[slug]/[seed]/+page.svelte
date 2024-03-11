@@ -3,12 +3,14 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { utils } from '$lib';
-	import { P5Element, P5Sketch } from '../../../../sketches/base';
+	import { P5Element, P5Sketch } from '../../../../../sketches/base';
 	import { Header } from '$lib';
 	import { goto } from '$app/navigation';
 	import Drawer from './drawer.svelte';
+	import { randomSeedFrom } from '$lib/random';
 
 	export let data;
+	let seed = data.seed;
 	let frameRate = 0;
 	let darkMode = false;
 	let sketch: any = null;
@@ -21,7 +23,7 @@
 		const html = document.documentElement;
 		dim = [html.offsetWidth, html.offsetHeight];
 		darkMode = html.classList.contains('dark');
-		sketch = await P5Sketch.loadAndRun(data.slug, { darkMode, frameRate, size: dim });
+		sketch = await P5Sketch.loadAndRun(data.slug, { darkMode, frameRate, size: dim, seed });
 	}
 
 	// $: data.sketch && goto(`/sketches/${data.sketch}`);
@@ -52,7 +54,9 @@
 
 		e.preventDefault();
 		if (e.code === 'Space') {
-			onResize();
+			sketch = null;
+			seed = randomSeedFrom();
+			goto(`/sketches/${data.slug}/${seed}`).then(onResize);
 		} else if (e.code === 'KeyM') {
 			verbose = !verbose;
 		} else if (e.code === 'KeyD') {
@@ -65,12 +69,12 @@
 			frameRate += 1;
 			onResize();
 		} else if (e.code === 'Minus') {
-			frameRate -= 1;
+			frameRate = Math.max(-1, frameRate - 1);
 			onResize();
 		} else if (e.code === 'Enter') {
 			const nextSketch = P5Sketch.nextSketchName(data.slug);
 			sketch = null;
-			goto(`/sketches/${nextSketch}`).then(onResize);
+			goto(`/sketches/${nextSketch}/${seed}`).then(onResize);
 		} else if (e.code === 'Slash') {
 			hideHelp = !hideHelp;
 		}

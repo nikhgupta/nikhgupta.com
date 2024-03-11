@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Input } from 'flowbite-svelte';
 	import { onHexInput, setBaseColor, baseColor, showFallback } from '../lib/store';
-	import { Color } from '../lib/colors';
+	import { Color } from '$lib/colors';
 
 	const setBaseColorFromRgb = (rgb: string) => {
 		const color = Color.fromRgb(rgb, false);

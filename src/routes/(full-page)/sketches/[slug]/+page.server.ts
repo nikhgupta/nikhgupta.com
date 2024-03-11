@@ -1,5 +1,6 @@
-import { error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import { randomSeedFrom } from '$lib/random';
 
 export async function load({ params }: { params: { slug: string } }) {
-	return { slug: params.slug };
+	redirect(302, `/sketches/${params.slug}/${randomSeedFrom()}`);
 }

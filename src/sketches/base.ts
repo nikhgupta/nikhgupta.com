@@ -3,21 +3,11 @@ import type { p5, Sketch } from 'p5-svelte';
 import { browser } from '$app/environment';
 
 import { lchChromaMap } from '$lib/store';
-import { Color } from '../routes/(blog)/tools/palette-generator/lib/colors';
+import { Color } from '$lib/colors';
+import { randomSeedFrom, Random } from '$lib/random';
 
 export const P5Element = P5;
-export const AVAILABLE_SKETCHES = ['circles', 'squares', 'mondrian'];
-
-const hashFunction = (s: string) => {
-	var hash = 0;
-
-	let i: number;
-	for (i = 0; i < s.length; i++) {
-		hash = (hash << 5) - hash + s.charCodeAt(i);
-		hash = hash & hash; // prevent overflow from happening
-	}
-	return hash & 0xffff; // returns lower 16-bit of hash value
-};
+export const AVAILABLE_SKETCHES = ['circles', 'squares', 'mondrian', 'flowlines'];
 
 export interface P5SketchArguments {
 	colors?: string[];
@@ -25,21 +15,24 @@ export interface P5SketchArguments {
 	darkMode?: boolean;
 	size?: [number, number] | null;
 	frameRate?: number;
-	seed?: string;
+	seed?: number | null;
 	hue?: number | null;
 }
 
 export class P5Sketch {
+	r: Random;
 	dim: [number, number];
 	aside: string;
 	darkMode: boolean;
 	frameRate: number;
-	seed: number;
+	seed!: number;
 	startingHue: number;
 	chromaMap: Record<number, number>;
 	colors: string[];
 	startingColor: Color;
 	sizes: number[];
+	curves: ((x: number) => number)[];
+	curvesIrregular: ((x: number) => number)[];
 
 	constructor({
 		colors = ['#f3f8ff', '#121f32'],
@@ -47,16 +40,18 @@ export class P5Sketch {
 		darkMode = false,
 		size = null,
 		frameRate = 0,
-		seed = '',
-		hue = null
+		hue = null,
+		seed = null
 	}: P5SketchArguments) {
+		this.setSeed(seed);
+		this.r = new Random(this.seed);
+
 		this.dim = size ? size : [0, 0];
 
 		this.aside = aside;
 		this.darkMode = darkMode;
 		this.colors = colors;
 		this.frameRate = frameRate;
-		this.seed = this.setSeed(seed);
 		this.sizes = [1 / 64, 1 / 32, 1 / 16, 1 / 8, 1 / 4, 1 / 2, 1, 2, 4, 8, 16, 32, 64];
 
 		this.chromaMap = [];
@@ -64,6 +59,9 @@ export class P5Sketch {
 
 		this.startingHue = hue != null ? hue : this.randomStartingHueAsPerBackground();
 		this.startingColor = this.pickStartingColor({ from: this.bgColor() });
+
+		this.curves = Array.from({ length: 16 }, (x, i) => this.smoothCurve());
+		this.curvesIrregular = Array.from({ length: 16 }, (x, i) => this.smoothCurve(null, null));
 	}
 
 	static run(params: P5SketchArguments) {
@@ -99,11 +97,16 @@ export class P5Sketch {
 	draw(p5: p5) {
 		if (this.frameRate == 0) {
 			p5.noLoop();
+			p5.frameRate(0);
 		} else {
-			p5.frameRate(this.frameRate);
+			p5.loop();
+			if (this.frameRate > 0) p5.frameRate(this.frameRate);
 		}
 
 		this.onDraw(p5);
+
+		let fps = p5.frameRate();
+		if (this.frameRate != 0) p5.text(fps, 50, 50);
 	}
 
 	beforeSetup(p5: p5) {}
@@ -112,19 +115,11 @@ export class P5Sketch {
 		p5.background(this.bgColor());
 	}
 
-	onDraw(p5: p5) {
-		p5.translate(p5.width / 2, p5.height / 2);
+	onDraw(p5: p5) {}
 
-		let v = p5.createVector(p5.random(-100, 100), p5.random(-100, 100));
-		v.mult(p5.random(50, 100));
-
-		p5.strokeWeight(1);
-		p5.line(0, 0, v.x, v.y);
-	}
-
-	setSeed(seed: string) {
-		this.seed = seed.length > 0 ? hashFunction(seed) : Math.round(Math.random() * 1000000);
-		return this.seed;
+	setSeed(seed: number | null) {
+		this.seed = seed ? seed : randomSeedFrom();
+		return this;
 	}
 
 	bgColor() {
@@ -139,11 +134,18 @@ export class P5Sketch {
 		return (1 + Math.sin(p5.frameCount / steps)) / 2;
 	}
 
-	randomStartingHueAsPerBackground() {
-		if (this.darkMode) return Math.random() * 60 + 220;
+	// generate a smooth curve in the range [0, 1]
+	smoothCurve(n: number | null = null, m: number | null = 0.5) {
+		const c = m != null ? m : this.r.random();
+		const d = n != null ? n : this.r.random();
+		return (x: number) => 0.5 + 0.5 * Math.cos(2 * Math.PI * (c * x + d));
+	}
 
-		let r = Math.random() * 360;
-		while ((r > 90 && r < 150) || r > 300) r = Math.random() * 360;
+	randomStartingHueAsPerBackground() {
+		if (this.darkMode) return this.r.random() * 60 + 220;
+
+		let r = this.r.random() * 360;
+		while ((r > 90 && r < 150) || r > 300) r = this.r.random() * 360;
 		return r;
 	}
 
@@ -173,7 +175,7 @@ export class P5Sketch {
 	}
 
 	pickStartingColor({ from = null }: { from?: string | Color | null } = {}) {
-		let color: Color = Color.fromRandom();
+		let color: Color = Color.fromRandom(this.seed);
 
 		if (from && typeof from === 'string') {
 			color = Color.fromRgb(from) || color;
@@ -227,7 +229,7 @@ export class P5Sketch {
 		const normalizedMap: [T, number][] = funcMap.map(([key, value]) => [key, value / totalWeight]);
 
 		let sum = 0,
-			r = Math.random();
+			r = this.r.random();
 
 		for (let [i, v] of Object.entries(normalizedMap)) {
 			sum += v[1];
