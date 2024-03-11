@@ -57,6 +57,7 @@
 			verbose = !verbose;
 		} else if (e.code === 'KeyD') {
 			utils.toggleDarkMode(-1);
+			onResize();
 		} else if (e.code === 'KeyR') {
 			frameRate = 0;
 			onResize();
