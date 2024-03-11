@@ -30,7 +30,9 @@
 		<li>Press <code>space</code> or <code>R</code> to generate a new image in the same sketch.</li>
 		<li>Press <code>Enter</code> to switch to next Sketch.</li>
 		<li>Press <code>d</code> to toggle dark mode.</li>
-		<li>Press <code>m</code> to toggle color hex values.</li>
+		<li>Press <code>m</code> to toggle text on screen.</li>
+		<li>Press <code>-</code> to try and decrease frameRate.</li>
+		<li>Press <code>+</code> to try and increase frameRate.</li>
 		<li>Press <code>/</code> to toggle this help.</li>
 	</ul>
 

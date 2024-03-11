@@ -92,13 +92,16 @@ export class P5Sketch {
 		this.setDimensions();
 		this.beforeSetup(p5);
 
-		if (this.frameRate > 0) p5.frameRate(this.frameRate);
 		p5.createCanvas(this.dim[0], this.dim[1]);
 		this.onSetup(p5);
 	}
 
 	draw(p5: p5) {
-		if (this.frameRate == 0) p5.noLoop();
+		if (this.frameRate == 0) {
+			p5.noLoop();
+		} else {
+			p5.frameRate(this.frameRate);
+		}
 
 		this.onDraw(p5);
 	}
