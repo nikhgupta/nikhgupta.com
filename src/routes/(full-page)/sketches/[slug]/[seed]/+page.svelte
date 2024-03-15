@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 	import { utils } from '$lib';
 	import { P5Element, P5Sketch } from '../../../../../sketches/base';
@@ -8,26 +8,36 @@
 	import { goto } from '$app/navigation';
 	import Drawer from './drawer.svelte';
 	import { randomSeedFrom } from '$lib/random';
+	import type { Sketch } from 'p5-svelte';
 
 	export let data;
 	let seed = data.seed;
 	let frameRate = 0;
 	let darkMode = false;
-	let sketch: any = null;
+	let sketch: Sketch | null = null;
 	let dim: [number, number] = [0, 0];
 	let hideHelp = true;
 	let verbose = true;
 
 	async function onResize() {
-		sketch = null;
+		destroyCurrent();
+
 		const html = document.documentElement;
 		dim = [html.offsetWidth, html.offsetHeight];
 		darkMode = html.classList.contains('dark');
-		sketch = await P5Sketch.loadAndRun(data.slug, { darkMode, frameRate, size: dim, seed });
+		[sketch, p5Instance] = await P5Sketch.loadAndRun(data.slug, {
+			darkMode,
+			frameRate,
+			size: dim,
+			seed
+		});
 	}
 
 	// $: data.sketch && goto(`/sketches/${data.sketch}`);
 	$: $page.url.pathname && browser && onResize();
+
+	let p5Instance: any = null;
+	let p5ref: any = undefined;
 
 	onMount(() => {
 		if (browser) {
@@ -38,13 +48,31 @@
 			document.body.classList.add('!w-full');
 		}
 
-		return () => {
-			if (browser) {
-				document.body.classList.remove('!w-full');
-				window.removeEventListener('resize', onResize);
-			}
-		};
+		return () => {};
 	});
+
+	const destroyCurrent = () => {
+		if (p5ref) {
+			p5ref.remove();
+			p5ref = undefined;
+		}
+
+		if (browser) {
+			// @ts-ignore
+			window._p5Instance = undefined;
+			document.body.classList.remove('!w-full');
+			window.removeEventListener('resize', onResize);
+		}
+
+		if (p5Instance) {
+			p5Instance.destroy();
+			p5Instance = null;
+		}
+
+		sketch = null;
+	};
+
+	onDestroy(destroyCurrent);
 
 	const onKeyDown = (e: KeyboardEvent) => {
 		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return;
@@ -54,7 +82,7 @@
 
 		e.preventDefault();
 		if (e.code === 'Space') {
-			sketch = null;
+			destroyCurrent();
 			seed = randomSeedFrom();
 			goto(`/sketches/${data.slug}/${seed}`).then(onResize);
 		} else if (e.code === 'KeyM') {

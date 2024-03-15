@@ -12,6 +12,15 @@ export function formatDate(
 	return dateFormatter.format(dateToFormat);
 }
 
+export function* range(start: number, stop: number | null = null, step: number = 1) {
+	if (stop == null) [stop, start] = [start, 0];
+	if (start > stop) return;
+
+	for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
+		yield i;
+	}
+}
+
 export const toggleDarkMode = (mode: number = -1) => {
 	if (browser) {
 		const html = document.documentElement;

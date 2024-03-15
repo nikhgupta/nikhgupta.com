@@ -4,10 +4,6 @@ import type { p5 } from 'p5-svelte';
 
 export default P5Element;
 export class CurrentSketch extends P5Sketch {
-	constructor(params: P5SketchArguments) {
-		super(params);
-	}
-
 	onDraw(p5: p5) {
 		const m = this.sineWave(p5, { steps: 4 });
 		const n = Math.round(Math.pow(this.dim[0] * this.dim[1], 0.15 + m * 0.05));

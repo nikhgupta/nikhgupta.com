@@ -1,4 +1,4 @@
-import { useMode, modeOklch, modeRgb, formatHex, displayable } from 'culori/fn';
+import { useMode, modeOklch, modeRgb, formatHex8, displayable } from 'culori/fn';
 
 import { Random, randomSeedFrom, str2hashnum } from '$lib/random';
 import { lchChromaMap } from '$lib/store';
@@ -105,7 +105,7 @@ export class Color {
 	}
 
 	toHex(data: any = {}) {
-		const rgb = formatHex({ ...this.data, ...data });
+		const rgb = formatHex8({ ...this.data, ...data });
 		return rgb ? rgb : BLACK;
 	}
 
@@ -129,6 +129,10 @@ export class Color {
 	_transformLightness(l: number, h: number | null = null, maxChroma: boolean = false) {
 		const c = maxChroma ? this.maxChromaFor(l) : this.c;
 		return this.transform({ l, c: c, h: h ? h : this.h });
+	}
+
+	transformLight(l: number, h: number | null = null) {
+		return this._transformLightness(l, h, true);
 	}
 
 	hueSwatch(num: number = DEFAULT_SIZE, distance: number = DEFAULT_DISTANCE) {

@@ -1,7 +1,7 @@
 import { P5Sketch, P5Element } from './base';
 import type { P5SketchArguments } from './base';
 import type { p5 } from 'p5-svelte';
-import { Color } from '../routes/(blog)/tools/palette-generator/lib/colors';
+import { Color } from '$lib/colors';
 
 export default P5Element;
 export class CurrentSketch extends P5Sketch {

@@ -5,6 +5,7 @@ import { browser } from '$app/environment';
 import { lchChromaMap } from '$lib/store';
 import { Color } from '$lib/colors';
 import { randomSeedFrom, Random } from '$lib/random';
+import { Font } from 'p5';
 
 export const P5Element = P5;
 export const AVAILABLE_SKETCHES = ['circles', 'squares', 'mondrian', 'flowlines'];
@@ -20,19 +21,25 @@ export interface P5SketchArguments {
 }
 
 export class P5Sketch {
-	r: Random;
-	dim: [number, number];
-	aside: string;
-	darkMode: boolean;
-	frameRate: number;
-	seed!: number;
-	startingHue: number;
-	chromaMap: Record<number, number>;
-	colors: string[];
-	startingColor: Color;
-	sizes: number[];
-	curves: ((x: number) => number)[];
-	curvesIrregular: ((x: number) => number)[];
+	colors: string[]; // fg and bg colors of the sketch (used for homepage)
+	aside: string; // id of the aside element (used for homepage)
+	darkMode: boolean; // whether the sketch is in dark mode
+	dim: [number, number]; // dimensions of the canvas
+	seed!: number; // seed for the random number generator
+	startingHue: number; // starting hue of the sketch
+	frameRate: number; // frame rate of the sketch
+
+	r: Random; // random number generator (seeded)
+	testing: boolean; // whether the sketch is in testing mode
+	chromaMap: Record<number, number>; // chroma map for the LCH color space
+	startingColor: Color; // starting color of the sketch
+	sizes: number[]; // sizes for the weighted random function
+	curves: ((x: number) => number)[]; // smooth curves for the sketch
+	curvesIrregular: ((x: number) => number)[]; // irregular smooth curves for the sketch
+	maxFrames: number; // maximum number of frames for the sketch
+	frameCount: number;
+
+	_font: Font | null; // font for the sketch
 
 	constructor({
 		colors = ['#f3f8ff', '#121f32'],
@@ -43,6 +50,7 @@ export class P5Sketch {
 		hue = null,
 		seed = null
 	}: P5SketchArguments) {
+		this.testing = false;
 		this.setSeed(seed);
 		this.r = new Random(this.seed);
 
@@ -52,49 +60,85 @@ export class P5Sketch {
 		this.darkMode = darkMode;
 		this.colors = colors;
 		this.frameRate = frameRate;
-		this.sizes = [1 / 64, 1 / 32, 1 / 16, 1 / 8, 1 / 4, 1 / 2, 1, 2, 4, 8, 16, 32, 64];
+		this.maxFrames = frameRate > 0 ? 60 * frameRate : 0;
+		this.frameCount = 0;
 
-		this.chromaMap = [];
-		lchChromaMap.subscribe((value) => (this.chromaMap = value));
+		this._font = null;
 
 		this.startingHue = hue != null ? hue : this.randomStartingHueAsPerBackground();
-		this.startingColor = this.pickStartingColor({ from: this.bgColor() });
+		this.startingColor = this.pickStartingColor();
 
+		// utility setup: commonly used values
+		// different sizes for use in sketches without providing them again and again
+		this.sizes = [1 / 64, 1 / 32, 1 / 16, 1 / 8, 1 / 4, 1 / 2, 1, 2, 4, 8, 16, 32, 64];
+		// chroma map
+		this.chromaMap = [];
+		lchChromaMap.subscribe((value) => (this.chromaMap = value));
+		// smoothing curves
 		this.curves = Array.from({ length: 16 }, (x, i) => this.smoothCurve());
 		this.curvesIrregular = Array.from({ length: 16 }, (x, i) => this.smoothCurve(null, null));
 	}
 
+	destroy() {
+		this.chromaMap = [];
+		this.curves = [];
+		this.curvesIrregular = [];
+	}
+
+	// return function for Sketch used by p5-svelte to run it
 	static run(params: P5SketchArguments) {
 		const self = new this(params);
 		const sketch: Sketch = (p5: p5) => {
+			p5.preload = () => self.preload(p5);
 			p5.setup = () => self.setup(p5);
 			p5.draw = () => self.draw(p5);
 		};
 
-		return sketch;
+		return [sketch, self];
 	}
 
+	// used in the homepage to load and run a sketch from file name
 	static async loadAndRun(name: string, params: P5SketchArguments) {
 		const { CurrentSketch } = await import(`../sketches/${name}.ts`);
 		return CurrentSketch.run(params);
 	}
 
+	// find the next available sketch to cycle to
 	static nextSketchName(name: string) {
 		const index = AVAILABLE_SKETCHES.indexOf(name);
 		return AVAILABLE_SKETCHES[(index + 1) % AVAILABLE_SKETCHES.length];
 	}
 
+	preload(p5: p5) {
+		this._font = p5.loadFont('/Roboto-Regular.ttf');
+	}
+
 	setup(p5: p5) {
 		p5.randomSeed(this.seed);
+		p5.noiseSeed(this.seed);
 
+		// set dimensions of the sketch based on the aside element or viewport
 		this.setDimensions();
-		this.beforeSetup(p5);
+		p5.createCanvas(this.dim[0], this.dim[1], p5.WEBGL);
+		p5.translate(-this.dim[0] / 2, -this.dim[1] / 2);
+		p5.background(this.bgColor());
+		p5.textFont(this._font!);
+		this.drawText(p5, 'loading...');
 
-		p5.createCanvas(this.dim[0], this.dim[1]);
-		this.onSetup(p5);
+		p5.noFill();
+		p5.stroke(this.fgColor());
+		p5.strokeWeight(1);
+		this.beforeDrawing(p5);
+		this.drawText(p5, 'setting up the sketch... may take a moment..');
 	}
 
 	draw(p5: p5) {
+		p5.textFont(this._font!);
+		this.frameCount = p5.frameCount;
+
+		const progress = this.progress();
+		p5.translate(-this.dim[0] / 2, -this.dim[1] / 2);
+
 		if (this.frameRate == 0) {
 			p5.noLoop();
 			p5.frameRate(0);
@@ -103,23 +147,81 @@ export class P5Sketch {
 			if (this.frameRate > 0) p5.frameRate(this.frameRate);
 		}
 
-		this.onDraw(p5);
+		if (p5.frameCount == 1) {
+			this.setupDependencies(p5);
+			p5.background(this.startingColor.toHex());
+			this.onFirstFrame(p5);
+		}
 
-		let fps = p5.frameRate();
-		if (this.frameRate != 0) p5.text(fps, 50, 50);
+		if (p5.frameCount % this.frameRate == 1) {
+			let fps = Math.round(p5.frameRate());
+			this.onEachTick(p5, progress);
+			console.log(fps);
+		}
+
+		if (this.maxFrames > 0 && p5.frameCount > this.maxFrames) {
+			p5.noLoop();
+			this.onFinishUp(p5);
+			console.log('Finished rendering!');
+			return;
+		}
+
+		p5.noFill();
+		p5.stroke(this.fgColor());
+		p5.strokeWeight(1);
+		this.onEachFrame(p5, progress);
 	}
 
-	beforeSetup(p5: p5) {}
+	// override setup instructions from base class
+	beforeDrawing(p5: p5) {}
 
-	onSetup(p5: p5) {
-		p5.background(this.bgColor());
+	// setup dependencies for the sketch
+	// this is called once before the first frame
+	// and is used to setup the sketch
+	// shows a message to user by default while setting up
+	setupDependencies(p5: p5) {}
+
+	// called on the first frame of the sketch
+	onFirstFrame(p5: p5) {}
+
+	// called on each frame of the sketch
+	onEachFrame(p5: p5, progress: number) {}
+
+	// called on each tick of the sketch, tick = frameCount % frameRate == 1
+	onEachTick(p5: p5, progress: number) {}
+
+	// called when the sketch is finished rendering
+	onFinishUp(p5: p5) {}
+
+	// return the progress of the sketch in the range [0, 1]
+	progress() {
+		return this.maxFrames > 0 ? this.frameCount / this.maxFrames : 0;
 	}
 
-	onDraw(p5: p5) {}
+	currentTick() {
+		return Math.floor(this.frameCount / this.frameRate);
+	}
 
+	// set the seed for the random number generator
 	setSeed(seed: number | null) {
 		this.seed = seed ? seed : randomSeedFrom();
 		return this;
+	}
+
+	drawText(
+		p5: p5,
+		text: string,
+		{ pos = null, size = 24 }: { pos?: [number, number] | null; size?: number } = {}
+	) {
+		console.log('rendering text:', text);
+		return;
+
+		// p5.fill(this.fgColor());
+		// p5.textFont(this._font!);
+		// p5.textSize(size);
+		// if (!pos) pos = [this.dim[0] * 0.3, this.dim[1] * 0.5];
+		// p5.text(text, ...pos);
+		// p5.noFill();
 	}
 
 	bgColor() {
@@ -183,24 +285,51 @@ export class P5Sketch {
 			color = from;
 		}
 
-		return color.transform({ h: this.startingHue });
+		const l = this.darkMode ? 0.35 : 0.95;
+		return color._transformHue(this.startingHue).transformLight(l);
 	}
 
-	currentColor(p5: p5) {
-		return this.startingColor.transform({ h: this.startingColor.h + p5.frameCount });
+	currentColor(p5: p5, scale: number = 1) {
+		return this.startingColor.transform({ h: this.startingColor.h + p5.frameCount / scale });
+	}
+
+	currentDrawColor(p5: p5, scale: number = 1, lightness: [number, number] = [0.75, 0.55]) {
+		return this.currentColor(p5, scale).transformLight(this.darkMode ? lightness[1] : lightness[0]);
 	}
 
 	lightnessPalette(
 		p5: p5,
-		{ size = 16, lightness = [0.75, 0.25] }: { size?: number; lightness?: [number, number] } = {}
+		{
+			size = 16,
+			scale = 1,
+			lightness = [0.75, 0.25]
+		}: { size?: number; scale?: number; lightness?: [number, number] } = {}
 	) {
 		const minLight = this.darkMode ? lightness[1] : lightness[0];
-		const color = this.currentColor(p5);
+		const color = this.currentDrawColor(p5, scale, lightness);
 		return color.lightnessSwatch(size, minLight, minLight + 0.2, color.h, false, true);
 	}
 
-	huePalette(p5: p5, { size = 12 }: { size?: number } = {}) {
-		return this.currentColor(p5).hueSwatch(size, 360 / size);
+	huePalette(
+		p5: p5,
+		{
+			lightness = [0.75, 0.25],
+			scale = 1,
+			size = 12
+		}: { lightness?: [number, number]; scale?: number; size?: number } = {}
+	) {
+		return this.currentDrawColor(p5, scale, lightness).hueSwatch(size, 360 / size);
+	}
+
+	tetradicPalette(
+		p5: p5,
+		{
+			lightness = [0.75, 0.25],
+			scale = 1,
+			size = 4
+		}: { lightness?: [number, number]; scale?: number; size?: number } = {}
+	) {
+		return this.currentDrawColor(p5, scale, lightness).tetradicInclusive();
 	}
 
 	chance(
