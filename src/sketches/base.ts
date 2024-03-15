@@ -8,7 +8,7 @@ import { randomSeedFrom, Random } from '$lib/random';
 import { Font } from 'p5';
 
 export const P5Element = P5;
-export const AVAILABLE_SKETCHES = ['circles', 'squares', 'mondrian', 'flowlines'];
+export const AVAILABLE_SKETCHES = ['scattered', 'mondrian', 'flowlines-v1', 'flowlines-v2'];
 
 export interface P5SketchArguments {
 	colors?: string[];
@@ -94,7 +94,7 @@ export class P5Sketch {
 			p5.draw = () => self.draw(p5);
 		};
 
-		return [sketch, self];
+		return sketch;
 	}
 
 	// used in the homepage to load and run a sketch from file name

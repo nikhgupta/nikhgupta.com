@@ -1,0 +1,33 @@
+---
+title: Diving into Rust for Creative Coding
+description: Learning Rust by explorting creative coding and generative art.
+date: "2024-03-16"
+published: true
+---
+
+
+I've recently embarked on an exciting new journey that I'm eager to share with you all. As someone who has navigated the dynamic worlds of Ruby, Python, and JavaScript for years, I found myself yearning for a new challenge - a venture that would not only refine my skills but also, fuel my passion for programming. That's where Rust comes into play.
+
+## The Leap from Dynamic to Static
+
+My programming adventures have mostly been within the confines of dynamic languages, tools that have been reliable and familiar. Yet, there's a part of me that's always seeking growth, looking to break the monotony and push beyond the familiar boundaries. This drive led me to Rust, a language renowned for its performance and safety but also one that represents a significant shift from the dynamic environments I'm accustomed to.
+
+Why Rust, though? It's simple: I want to learn. Not just to acquire a new skill for the sake of it but to undergo a transformation that enriches my understanding and approach to coding. Rust challenges me with its strict type system and ownership model—concepts that are foreign in the dynamic landscapes I am accustomed to. This transition is not just about adding another language to my skill set; it's about adopting a new mindset and expanding my programming paradigms.
+
+## Merging Code with Creativity
+
+But why stop at learning a new language? Why not make this journey even more personal and captivating? That's where creative coding comes into the picture. Creative coding allows me to visualize my progress, to see the abstract become tangible. It's about bringing art and code together, creating something beautiful from the rigidity of syntax and semantics.
+
+For this purpose, I've chosen to dive into the world of creative coding with [nannou](https://nannou.cc), a Rust framework designed for artistic expression. This fusion of art and code is not just a learning tool; it's a source of inspiration, a way to translate the complexity of Rust into stunning visual narratives.
+
+## Sharing the Journey
+
+This blog post is an invitation. I want to share every step of this journey with you. From the challenges and setbacks to the breakthroughs and creations, this blog will serve as a testament to the learning process. It's about demystifying Rust and creative coding, making them accessible and engaging.
+
+Whether you're a seasoned developer, an artist curious about coding, or someone entirely new to programming, I welcome you to follow along. I hope to not only document my progress but also to inspire and encourage others to explore new horizons, whether it be Rust or any other venture outside your comfort zone.
+
+## Looking Ahead
+
+As this project unfolds, I'll share insights, tutorials, and the art I create. But more than that, I hope to spark discussions, answer questions, and perhaps even collaborate with others interested in this intersection of coding and creativity.
+
+So, here's to a journey of learning, growth, and creativity. Let's explore the unexplored, push boundaries, and transform our understanding of what it means to be a developer and an artist. Join me, and let's navigate these new waters together.

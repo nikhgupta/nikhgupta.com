@@ -20,6 +20,6 @@ export class HomeSketch extends P5Sketch {
 			p5.draw = () => self.draw(p5);
 		};
 
-		return [sketch, self];
+		return sketch;
 	}
 }

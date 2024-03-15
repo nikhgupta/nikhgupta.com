@@ -25,7 +25,7 @@
 		const html = document.documentElement;
 		dim = [html.offsetWidth, html.offsetHeight];
 		darkMode = html.classList.contains('dark');
-		[sketch, p5Instance] = await P5Sketch.loadAndRun(data.slug, {
+		sketch = await P5Sketch.loadAndRun(data.slug, {
 			darkMode,
 			frameRate,
 			size: dim,
@@ -36,7 +36,6 @@
 	// $: data.sketch && goto(`/sketches/${data.sketch}`);
 	$: $page.url.pathname && browser && onResize();
 
-	let p5Instance: any = null;
 	let p5ref: any = undefined;
 
 	onMount(() => {
@@ -62,11 +61,6 @@
 			window._p5Instance = undefined;
 			document.body.classList.remove('!w-full');
 			window.removeEventListener('resize', onResize);
-		}
-
-		if (p5Instance) {
-			p5Instance.destroy();
-			p5Instance = null;
 		}
 
 		sketch = null;

@@ -1,32 +1,32 @@
 <script lang="ts">
 	import { utils } from '$lib';
 	import type { types } from '$lib';
-	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
+	// import { onMount } from 'svelte';
+	// import { browser } from '$app/environment';
 
 	export let data: types.PageData;
 
 	let keywords = data.metadata.keywords;
 	if (!keywords && data.metadata.categories) keywords = data.metadata.categories.join(', ');
 
-	import P5Element, { CurrentSketch } from '../../sketches/mondrian';
+	// import P5Element, { CurrentSketch } from '../../sketches/mondrian';
 
-	let darkMode = false;
-	let sketch: any = null;
+	// let darkMode = false;
+	// let sketch: any = null;
 
-	function onResize() {
-		const html = document.documentElement;
-		darkMode = html.classList.contains('dark');
-		sketch = CurrentSketch.run({
-			darkMode,
-			frameRate: 0,
-			size: [960, 384]
-		});
-	}
+	// function onResize() {
+	// 	const html = document.documentElement;
+	// 	darkMode = html.classList.contains('dark');
+	// 	sketch = CurrentSketch.run({
+	// 		darkMode,
+	// 		frameRate: 0,
+	// 		size: [960, 384]
+	// 	});
+	// }
 
-	onMount(() => {
-		if (browser) onResize();
-	});
+	// onMount(() => {
+	// 	if (browser) onResize();
+	// });
 </script>
 
 <!-- SEO -->
@@ -66,9 +66,9 @@
 		<svelte:component this={data.content} snippets={data.snippets} />
 	</div>
 </article>
-
+<!-- 
 <hr />
 
 {#if sketch}
 	<div class="my-8 min-w-[960px] min-h-[384px]"><P5Element {sketch} /></div>
-{/if}
+{/if} -->
