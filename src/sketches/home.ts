@@ -2,7 +2,7 @@ import { P5Sketch, P5Element } from './base';
 import type { P5SketchArguments } from './base';
 import type { p5, Sketch } from 'p5-svelte';
 
-import { CurrentSketch } from './circles';
+import { CurrentSketch } from './scattered';
 // import { MondrianSketch } from './mondrian';
 
 export default P5Element;
@@ -15,10 +15,11 @@ export class HomeSketch extends P5Sketch {
 		const what = CurrentSketch;
 		const self = new what(params);
 		const sketch: Sketch = (p5: p5) => {
+			p5.preload = () => self.preload(p5);
 			p5.setup = () => self.setup(p5);
 			p5.draw = () => self.draw(p5);
 		};
 
-		return sketch;
+		return [sketch, self];
 	}
 }

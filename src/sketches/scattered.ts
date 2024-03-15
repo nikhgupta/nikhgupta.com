@@ -4,7 +4,13 @@ import type { p5 } from 'p5-svelte';
 
 export default P5Element;
 export class CurrentSketch extends P5Sketch {
-	onDraw(p5: p5) {
+	drawingMode!: string;
+
+	beforeDrawing(p5: p5): void {
+		this.drawingMode = this.r.choose(['mix', 'rect', 'circle']);
+	}
+
+	onEachFrame(p5: p5) {
 		const m = this.sineWave(p5, { steps: 4 });
 		const n = Math.round(Math.pow(this.dim[0] * this.dim[1], 0.15 + m * 0.05));
 		const palette = this.lightnessPalette(p5);
@@ -20,7 +26,19 @@ export class CurrentSketch extends P5Sketch {
 				// the larger the size is, the less likely it is to be drawn
 				const size = this.chooseWeighted({ power: -0.05 });
 				const choice = this.chance(size, { power: -4.95 });
-				if (p5.random() > choice) p5.rect(i * n, j * n, n * size);
+				if (p5.random() > choice) {
+					if (this.drawingMode == 'mix') {
+						if (p5.random() > 0.5) {
+							p5.rect(i * n, j * n, n * size);
+						} else {
+							p5.circle(i * n, j * n, n * size);
+						}
+					} else if (this.drawingMode == 'rect') {
+						p5.rect(i * n, j * n, n * size);
+					} else if (this.drawingMode == 'circle') {
+						p5.circle(i * n, j * n, n * size);
+					}
+				}
 			}
 		}
 	}

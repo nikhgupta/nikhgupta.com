@@ -39,7 +39,7 @@ export class P5Sketch {
 	maxFrames: number; // maximum number of frames for the sketch
 	frameCount: number;
 
-	_font: Font | null; // font for the sketch
+	_font: Font | string | null; // font for the sketch
 
 	constructor({
 		colors = ['#f3f8ff', '#121f32'],
@@ -110,8 +110,11 @@ export class P5Sketch {
 	}
 
 	preload(p5: p5) {
-		this._font = p5.loadFont('/Roboto-Regular.ttf');
+		this.onLoad(p5);
+		if (typeof this._font === 'string') this._font = p5.loadFont(this._font);
 	}
+
+	onLoad(p5: p5) {}
 
 	setup(p5: p5) {
 		p5.randomSeed(this.seed);
@@ -122,7 +125,6 @@ export class P5Sketch {
 		p5.createCanvas(this.dim[0], this.dim[1], p5.WEBGL);
 		p5.translate(-this.dim[0] / 2, -this.dim[1] / 2);
 		p5.background(this.bgColor());
-		p5.textFont(this._font!);
 		this.drawText(p5, 'loading...');
 
 		p5.noFill();
@@ -133,7 +135,6 @@ export class P5Sketch {
 	}
 
 	draw(p5: p5) {
-		p5.textFont(this._font!);
 		this.frameCount = p5.frameCount;
 
 		const progress = this.progress();
@@ -213,15 +214,16 @@ export class P5Sketch {
 		text: string,
 		{ pos = null, size = 24 }: { pos?: [number, number] | null; size?: number } = {}
 	) {
-		console.log('rendering text:', text);
-		return;
+		console.log('text:', text);
 
-		// p5.fill(this.fgColor());
-		// p5.textFont(this._font!);
-		// p5.textSize(size);
-		// if (!pos) pos = [this.dim[0] * 0.3, this.dim[1] * 0.5];
-		// p5.text(text, ...pos);
-		// p5.noFill();
+		if (this._font) {
+			p5.fill(this.fgColor());
+			p5.textFont(this._font!);
+			p5.textSize(size);
+			if (!pos) pos = [this.dim[0] * 0.3, this.dim[1] * 0.5];
+			p5.text(text, ...pos);
+			p5.noFill();
+		}
 	}
 
 	bgColor() {

@@ -15,9 +15,7 @@ export class CurrentSketch extends P5Sketch {
 		this.startingColor = this.pickStartingColor().transform({ l: this.darkMode ? 0.35 : 0.75 });
 	}
 
-	beforeSetup(p5: p5) {}
-
-	onDraw(p5: p5) {
+	onEachFrame(p5: p5) {
 		console.log(this.startingHue, this.startingColor);
 		p5.strokeWeight(5); // make lines really thick
 		this.drawColors = this.huePalette(p5, { size: 4 });
