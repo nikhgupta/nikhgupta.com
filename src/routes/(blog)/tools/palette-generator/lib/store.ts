@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store';
 
-import { Color } from './colors';
+import { Color } from '$lib/colors';
 import { goto } from '$app/navigation';
 
 const color = Color.default();
