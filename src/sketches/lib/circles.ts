@@ -198,24 +198,28 @@ export class CirclePacker {
 		});
 	}
 
-	randomPointInMovingWindow(progress: number): [number, number] {
-		return this.randomPointsInMovingWindow(progress, 1)[0];
+	randomPointInMovingWindow(progress: number, extent: number = 0.25): [number, number] {
+		return this.randomPointsInMovingWindow(progress, 1, extent)[0];
 	}
 
-	randomPointsInMovingWindow(progress: number, n: number = 1): [number, number][] {
-		const window = this.currentWindow(progress);
+	randomPointsInMovingWindow(
+		progress: number,
+		n: number = 1,
+		extent: number = 0.25
+	): [number, number][] {
+		const window = this.currentWindow(progress, extent);
 		return this.randomPointsInBounds(n, { x: window[0], y: window[1] });
 	}
 
-	currentWindow(progress: number): [[number, number], [number, number]] {
+	currentWindow(progress: number, extent: number = 0.25): [[number, number], [number, number]] {
 		const [[startX, startY], [endX, endY], isForward] = this.movement;
 
 		let lineX = progress * (endX - startX) * (isForward ? 1 : -1);
 		let lineY = progress * (endY - startY) * (isForward ? 1 : -1);
 
 		return [
-			[-this.w * 0.25 + lineX, this.w * 1.25 + lineX],
-			[-this.h * 0.25 + lineY, this.h * 1.25 + lineY]
+			[-this.w * extent + lineX, this.w * (1 + extent) + lineX],
+			[-this.h * extent + lineY, this.h * (1 + extent) + lineY]
 		];
 	}
 

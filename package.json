@@ -22,6 +22,7 @@
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
+		"fast-simplex-noise": "^4.0.0",
 		"flowbite": "^2.3.0",
 		"flowbite-svelte": "^0.44.24",
 		"flowbite-svelte-icons": "^1.4.1",
@@ -42,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"apexcharts": "^3.47.0",
 		"culori": "^4.0.1",
 		"highlight.js": "^11.9.0",
 		"highlightjs-svelte": "^1.0.6",

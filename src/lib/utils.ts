@@ -34,7 +34,7 @@ export const toggleDarkMode = (mode: number = -1) => {
 	}
 };
 
-export function debounce(func: any, wait: number) {
+export function debounce(func: (...args: any) => any, wait: number) {
 	let timeout: any;
 
 	return function executedFunction(...args: any) {

@@ -2,6 +2,7 @@ import { Vector } from 'p5';
 import type { p5 } from 'p5-svelte';
 import { Color } from '$lib/colors';
 import { Random } from '$lib/random';
+import { makeNoise3D } from 'fast-simplex-noise';
 
 type ForceFieldOptions = {
 	density?: number;
@@ -46,7 +47,7 @@ export class ForceField {
 		this.density = density;
 		this.color = new Color(0, 0, 0, 1);
 
-		this._bounds = [-1, 2]; // [-0.5, 1.5]
+		this._bounds = [-0.25, 1.25]; // [-0.5, 1.5]
 		this._leftX = Math.floor(this.width * this._bounds[0]);
 		this._rightX = Math.floor(this.width * this._bounds[1]);
 		this._topY = Math.floor(this.height * this._bounds[0]);
@@ -234,6 +235,102 @@ export class ForceField {
 			const angle = self.p5!.map(self.p5!.noise(x, y), 0, 1, 0, 2 * Math.PI);
 			return Vector.fromAngle(angle, strength);
 		};
+	}
+
+	radialPerlinNoiseField({
+		strength = 1,
+		scale = 0.015
+	}: { strength?: number; scale?: number } = {}): ForceFieldFunction {
+		return (self: ForceField, col: number, row: number) => {
+			const x = col - self.cols / 2;
+			const y = row - self.rows / 2;
+			const angle = self.p5!.noise(x * scale, y * scale) * Math.PI * 2;
+			return Vector.fromAngle(angle, strength);
+		};
+	}
+
+	simplexNoiseField({
+		scale = 0.001,
+		strength = 1,
+		t = 0
+	}: { scale?: number; strength?: number; t?: number } = {}): ForceFieldFunction {
+		const random = Random.seeded(this.r.random() * 1000000000000000);
+		const noise = makeNoise3D(random);
+		const [m, n] = [this.r.range(0, this.cols), this.r.range(0, this.rows)];
+		return (self: ForceField, col: number, row: number) => {
+			const x = (col - m) * scale;
+			const y = (row - n) * scale;
+			const angle = noise(x, y, t) * Math.PI * 2;
+			return Vector.fromAngle(angle, strength);
+		};
+	}
+
+	fractalSimplexNoiseField({
+		scale = 0.015,
+		strength = 1,
+		octaves = 4,
+		multiplier = 2,
+		t = 0
+	}: {
+		scale?: number;
+		strength?: number;
+		octaves?: number;
+		multiplier?: number;
+		t?: number;
+	} = {}): ForceFieldFunction {
+		const random = Random.seeded(this.r.random() * 1000000000000000);
+		const noise = makeNoise3D(random);
+		const [m, n] = [this.r.range(0, this.cols), this.r.range(0, this.rows)];
+		return (self: ForceField, col: number, row: number) => {
+			const x = (col - m) * scale;
+			const y = (row - n) * scale;
+			const angle = this._fractalNoiseAngles(noise, x, y, t, octaves, multiplier);
+			return Vector.fromAngle(angle, strength);
+		};
+	}
+
+	fractalPerlinNoiseField({
+		scale = 0.015,
+		strength = 1,
+		octaves = 4,
+		multiplier = 2,
+		t = 0
+	}: {
+		scale?: number;
+		strength?: number;
+		octaves?: number;
+		multiplier?: number;
+		t?: number;
+	} = {}): ForceFieldFunction {
+		const noise = this.p5!.noise;
+		const [m, n] = [this.r.range(0, this.cols), this.r.range(0, this.rows)];
+		return (self: ForceField, col: number, row: number) => {
+			const x = (col - m) * scale;
+			const y = (row - n) * scale;
+			const angle = this._fractalNoiseAngles(noise, x, y, t, octaves, multiplier);
+			return Vector.fromAngle(angle, strength);
+		};
+	}
+
+	_fractalNoiseAngles(
+		noise_fn: any,
+		col: number,
+		row: number,
+		t: number = 0,
+		octaves: number = 4,
+		multiplier: number = 2
+	) {
+		let value = 0;
+		let amplitude = 1;
+		let frequency = 1;
+		let wt = 0;
+		for (let i = 0; i < octaves; i++) {
+			value += noise_fn(col * frequency, row * frequency, t * frequency) * amplitude;
+			wt += amplitude;
+			amplitude *= multiplier;
+			frequency /= multiplier;
+		}
+		return (value / wt) * Math.PI * 2;
 	}
 
 	repulsorFieldAt(x: number, y: number, strength: number = 3): ForceFieldFunction {

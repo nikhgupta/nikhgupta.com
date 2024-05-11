@@ -19,6 +19,10 @@ export class CurrentSketch extends P5Sketch {
 	drawingMode: number;
 	drawingLineArgs: [number, number, number];
 
+	_lamp: number;
+	_hamp: number;
+	_color: Color;
+
 	constructor(params: P5SketchArguments) {
 		super(params);
 
@@ -32,10 +36,17 @@ export class CurrentSketch extends P5Sketch {
 		this.packer = null;
 
 		this.maxDim = Math.max(...this.dim);
-		this.field = new ForceField(this.dim[0], this.dim[1], this.seed, { density: 180 });
+		this.field = new ForceField(this.dim[0], this.dim[1], this.seed, {
+			density: Math.floor(this.r.range(60, 180))
+		});
 
 		this.drawingMode = this.r.choose([1, 2, 3, 0.5, 1 / 3]);
 		this.drawingLineArgs = this.r.shuffle([this.r.range(10, 30), 1, 1]) as [number, number, number];
+
+		this._lamp = this.r.range(0.2, 0.5);
+		this._hamp = this.r.range(-0.6, 0.6);
+		this._color = this.startingColor;
+		console.log(this._lamp, this._hamp);
 	}
 
 	destroy() {
@@ -45,25 +56,34 @@ export class CurrentSketch extends P5Sketch {
 
 	beforeDrawing(p5: p5) {
 		this.testing = true;
-		this.frameRate = this.testing ? 40 : 400;
+		this.frameRate = this.testing ? 40 : this.r.range(180, 320);
+		this.maxFrames = 36 * this.frameRate;
 
-		this.startingColor = this.currentDrawColor(p5).transformLight(this.darkMode ? 0.4 : 0.92);
+		this.startingColor = this.currentDrawColor(p5).transformLight(this.darkMode ? 0.54 : 0.84);
 		p5.background(this.startingColor.toHex());
 	}
 
 	_setupForceField(p5: p5) {
+		// const d = Math.floor(this.r.range(1, 4.99));
+		// const n = Math.floor(this.r.range(1, 8.99));
+		// console.log(d, n);
+		// for (let i = 0; i < n; i++) {
+		// 	this.forces.push(this.field.fractalSimplexNoiseField({ strength: 1, t: i * d }));
+		// }
+		this.forces.push(this.field.fractalSimplexNoiseField());
 		// this.__addRepulsor({ strength: 8, inside: false });
-		this.__addAttractor({ strength: 8, inside: false });
-		this.__addAttractor({ strength: 4, inside: false });
-		this.__addAttractor({ strength: 4, inside: false });
+		// const [x, y] = this.__addAttractor({ strength: 8, inside: false });
+		// console.log(x, y);
+		// this.__addAttractor({ strength: 4, inside: false });
+		// this.__addAttractor({ strength: 4, inside: false });
+		// this.__addAttractor({ strength: 2, inside: false });
 		// this.__addAttractor(p5, { strength: 1, mark: false });
 		// this.__addAttractor(p5, { x: -0.4, strength: 16, mark: false });
 		// this.__addAttractor(p5, { x: 1.4, strength: 8, mark: false });
 		// this.__addAttractor(p5, { strength: 1, mark: false });
-		// this.forces.push(this.field.perlinNoiseField({ strength: 1, scale: 0.05 }));
-		// this.forces.push(this.field.gradientField({ angle: 260, strength: 1 }));
+		this.forces.push(this.field.gradientField({ angle: 260, strength: 1 }));
 		this.forces.push(this.field.randomField({ strength: 0.0625 }));
-		this.forces.push(this.field.waveField({ strength: 4, scale: 0.02 }));
+		this.forces.push(this.field.waveField({ strength: 1, scale: 0.02 }));
 		return this.field.joinForces(...this.forces);
 	}
 
@@ -85,26 +105,41 @@ export class CurrentSketch extends P5Sketch {
 		this.field.visualize('#00000011', false);
 	}
 
-	onEachFrame(p5: p5, progress: number) {
-		const hueShift = this.r.range(120, 240);
-		const color = this.startingColor
-			.transform({ h: this.startingColor.h + hueShift * progress })
-			.transformLight(0.4 + (this.startingColor.l - 0.05 - 0.4) * (1 - progress));
+	onEachTick(p5: p5, progress: number): void {
+		// if (this.currentTick() % 6 != 0) return;
+		// changeColor(progress)
 
+		const window = this.packer!.currentWindow(progress);
+		console.log(window);
+	}
+
+	changeColor(progress: number) {
+		const p = Math.PI * 0.5;
+		const l =
+			this.startingColor.l +
+			(this.darkMode ? 0.04 : -0.04) +
+			this._lamp * Math.sin(progress * (this.darkMode ? p / 2 : -p));
+		const h =
+			this.startingColor.h + this.r.range(3, 8) + 360 * this._hamp * Math.sin(progress * p + 2 * p);
+		this._color = this.startingColor.transform({ h }).transformLight(l);
+	}
+
+	onEachFrame(p5: p5, progress: number) {
+		this.changeColor(progress);
 		const m = Math.floor(1 + progress * 6) ** 0.5;
 		this.data[0] = Math.floor(this.r.range(4, 10));
 		this.data[1] = this.r.range(0.001, 0.002) / m;
 		this.data[2] = this.r.range(0, 0.1);
 
-		this.__drawMultiLines(p5, color, ...this.drawingLineArgs, {});
-		if (this.r.random() > 0.99) this.__drawMultiLines(p5, color, 5, 1, 1, { freeform: true });
-
-		if (this.testing) {
-			p5.stroke('#00000011');
-			p5.strokeWeight(1);
-			const window = this.packer!.currentWindow(progress);
-			p5.rect(window[0][0], window[1][0], window[0][1] - window[0][0], window[1][1] - window[1][0]);
-		}
+		this.__drawMultiLines(p5, this._color, ...this.drawingLineArgs, {});
+		if (this.r.random() > 0.995)
+			this.__drawMultiLines(p5, this._color, 5, 1, 1, { freeform: true });
+		// if (this.testing) {
+		// 	p5.stroke('#00000011');
+		// 	p5.strokeWeight(1);
+		// 	const window = this.packer!.currentWindow(progress);
+		// 	p5.rect(window[0][0], window[1][0], window[0][1] - window[0][0], window[1][1] - window[1][0]);
+		// }
 	}
 
 	__drawMultiLines(
@@ -119,7 +154,7 @@ export class CurrentSketch extends P5Sketch {
 		const progress = this.progress();
 
 		for (let i = 0; i < clusters; i++) {
-			let [x, y] = this.packer!.randomPointInMovingWindow(progress);
+			let [x, y] = this.packer!.randomPointInMovingWindow(progress, 0.1);
 			if (freeform) {
 				[x, y] = this.packer!.randomPointFreeForm(progress);
 			}
@@ -189,7 +224,7 @@ export class CurrentSketch extends P5Sketch {
 		this[isAttr ? 'attractors' : 'repulsors'].push([x, y]);
 		this.forces.push(this.field.repulsorFieldAt(x * this.dim[0], y * this.dim[1], strength));
 
-		return this;
+		return [x, y];
 	}
 
 	__addAttractor({

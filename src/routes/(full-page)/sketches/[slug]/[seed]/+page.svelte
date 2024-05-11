@@ -78,7 +78,9 @@
 		if (e.code === 'Space') {
 			destroyCurrent();
 			seed = randomSeedFrom();
-			goto(`/sketches/${data.slug}/${seed}`).then(onResize);
+			if (browser) {
+				window.location.href = `/sketches/${data.slug}/${seed}`;
+			}
 		} else if (e.code === 'KeyM') {
 			verbose = !verbose;
 		} else if (e.code === 'KeyD') {

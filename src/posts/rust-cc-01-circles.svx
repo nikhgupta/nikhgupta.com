@@ -1,0 +1,32 @@
+---
+title: "RustCC01 - Creating Circular patterns with Rust"
+description: "Using rust and nannou to create circular patterns and animations"
+date: "2024-03-16"
+---
+
+In the [previous post](/posts/rust-creative-coding), I introduced [my journey into creative coding](https://github.com/nikhgupta/rust-creative) with Rust and Nannou. A list of tutorials that should be followed have been provided in the README of the repository.
+
+I want to kickoff that series with a simple example of how to create circular patterns with Rust and Nannou.
+This is the same artwork I am using on the sidebar of this website, right now. The end result will look like this (if you are on smaller screen):
+
+![RustCC01](/images/rust-cc/e01-circles-122839.png)
+
+I am going to add a few code snippets in this blog post, but the complete code can be found in the [rust-creative](https://github.com/nikhgupta/rust-creative) repository. With each section, I will provide a link to specific commit(s) in the repository.
+
+## Setting up the project
+
+We should already have a working Rust environment and an active workspace by following the [Schotter tutorial](https://github.com/sidwellr/schotter). If not, I strongly encourage you to follow that tutorial first.
+
+Lets, create a new binary for our project. [Commit](https://github.com/nikhgupta/rust-creative/commit/885f3543ef03f745209c11e62e29665b5e006b7f)
+
+```bash
+cargo new e01-circles
+cd e01-circles
+cargo run -p e01-circles
+```
+
+I added some boilerplate code to the `main.rs` file to get started. Copilot helped a lot in a quick completion of the code.
+
+The code diff includes changes to the Cargo.toml file and the addition of new files for the "e01-circles" module. These changes involve adding the necessary configuration for the "e01-circles" module to be included as a member of the project workspace, and adding boilerplate code to create a basic graphical application using the Nannou framework for rendering circles.
+
+Furthermore, the addition of the "e01-circles" module, along with its Cargo.toml and main.rs files, lays the foundation for creating a graphical application that utilizes the Nannou framework for creative coding. The boilerplate code establishes the basic structure for a graphical application, including initializing a window, defining the model, updating the application state, and rendering a background.

@@ -35,7 +35,7 @@
 				</li>
 				<li class="post mb-4">
 					<small class="mr-3">on Mar 11, 2024</small><br />
-					<a href="/sketches/circles" class="title">P5 Sketches Viewer</a>
+					<a href="/sketches/scattered" class="title">P5 Sketches Viewer</a>
 				</li>
 			</ul>
 		</div>
