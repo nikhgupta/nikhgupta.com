@@ -37,6 +37,10 @@
 					<small class="mr-3">on Mar 11, 2024</small><br />
 					<a href="/sketches/scattered" class="title">P5 Sketches Viewer</a>
 				</li>
+				<li class="post mb-4">
+					<small class="mr-3">on May 13, 2024</small><br />
+					<a href="/passwd" class="title">Secure Passphrase Generator</a>
+				</li>
 			</ul>
 		</div>
 	</div>
