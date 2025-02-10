@@ -127,6 +127,20 @@
 
 <h2 class="post-title">Generating Gradients using OKLCH colorspace</h2>
 
+<p>
+	This tool allows you to generate a gradient using the OKLCH colorspace. You can control the hue,
+	lightness, and chroma of the gradient. This tool is very useful in creative coding, where you want
+	to generate a gradient that is perceptually uniform and also, easy to control with variables.
+</p>
+
+<p class="font-bold">
+	Each of the hue, lightness, and chroma sliders have a DC offset, amplitude, frequency, and phase.
+	You can use these to generate a wide range of gradients. The formula for different waves is:
+	<code>h(x) = amp * sin(freq * x + phase) + dc</code>, where <code>x</code> varies from 0 to 1. The
+	lines below allow you to visualize how the waves look like and what the resulting gradient would be
+	for different parameters of each wave.
+</p>
+
 <div class="grid grid-cols-3 md:grid-cols-9 gap-4">
 	<div class="mb-6 col-span-3">
 		<h3>Hue</h3>

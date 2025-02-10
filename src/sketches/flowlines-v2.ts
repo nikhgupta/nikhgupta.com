@@ -16,8 +16,10 @@ export class CurrentSketch extends P5Sketch {
 	repulsors: [number, number][];
 	attractors: [number, number][];
 	forces: ForceFieldFunction[];
+	alphaBase: number;
 	drawingMode: number;
 	drawingLineArgs: [number, number, number];
+	forceFieldFn: ForceFieldFunction | null;
 
 	_lamp: number;
 	_hamp: number;
@@ -34,6 +36,7 @@ export class CurrentSketch extends P5Sketch {
 		this.attractors = [];
 		this.forces = [];
 		this.packer = null;
+		this.forceFieldFn = null;
 
 		this.maxDim = Math.max(...this.dim);
 		this.field = new ForceField(this.dim[0], this.dim[1], this.seed, {
@@ -41,7 +44,12 @@ export class CurrentSketch extends P5Sketch {
 		});
 
 		this.drawingMode = this.r.choose([1, 2, 3, 0.5, 1 / 3]);
-		this.drawingLineArgs = this.r.shuffle([this.r.range(10, 30), 1, 1]) as [number, number, number];
+		this.alphaBase = this.r.range(0.0, 1.0);
+		this.drawingLineArgs = this.r.shuffle([
+			this.r.range(1, 9),
+			this.r.range(1, 7),
+			this.r.range(1, 5)
+		]) as [number, number, number];
 
 		this._lamp = this.r.range(0.2, 0.5);
 		this._hamp = this.r.range(-0.6, 0.6);
@@ -55,8 +63,8 @@ export class CurrentSketch extends P5Sketch {
 	}
 
 	beforeDrawing(p5: p5) {
-		this.testing = true;
-		this.frameRate = this.testing ? 40 : this.r.range(180, 320);
+		this.testing = false;
+		this.frameRate = this.testing ? 40 : this.r.range(80, 320);
 		this.maxFrames = 36 * this.frameRate;
 
 		this.startingColor = this.currentDrawColor(p5).transformLight(this.darkMode ? 0.54 : 0.84);
@@ -70,7 +78,9 @@ export class CurrentSketch extends P5Sketch {
 		// for (let i = 0; i < n; i++) {
 		// 	this.forces.push(this.field.fractalSimplexNoiseField({ strength: 1, t: i * d }));
 		// }
-		this.forces.push(this.field.fractalSimplexNoiseField());
+		this.forces.push(this.field.fractalSimplexNoiseField({ strength: 0.5 }));
+		this.forces.push(this.field.fractalSimplexNoiseField({ strength: 0.25 }));
+		this.forces.push(this.field.fractalSimplexNoiseField({ strength: 0.125 }));
 		// this.__addRepulsor({ strength: 8, inside: false });
 		// const [x, y] = this.__addAttractor({ strength: 8, inside: false });
 		// console.log(x, y);
@@ -81,9 +91,20 @@ export class CurrentSketch extends P5Sketch {
 		// this.__addAttractor(p5, { x: -0.4, strength: 16, mark: false });
 		// this.__addAttractor(p5, { x: 1.4, strength: 8, mark: false });
 		// this.__addAttractor(p5, { strength: 1, mark: false });
-		this.forces.push(this.field.gradientField({ angle: 260, strength: 1 }));
-		this.forces.push(this.field.randomField({ strength: 0.0625 }));
-		this.forces.push(this.field.waveField({ strength: 1, scale: 0.02 }));
+
+		let angle = this.r.range(0, 360);
+		let strength = this.r.range(-0.125, 0.125);
+		if (this.r.random() > 0.9) {
+			this.forces.push(this.field.gradientField({ angle, strength }));
+		}
+		strength = this.r.range(-0.125, 0.125);
+		if (this.r.random() > 0.9) {
+			this.forces.push(this.field.randomField({ strength }));
+		}
+		strength = this.r.range(-0.125, 0.125);
+		if (this.r.random() > 0.9) {
+			this.forces.push(this.field.waveField({ strength, scale: 0.02 }));
+		}
 		return this.field.joinForces(...this.forces);
 	}
 
@@ -91,18 +112,21 @@ export class CurrentSketch extends P5Sketch {
 		p5.background(this.startingColor.toHex());
 		this.field.setContext(p5);
 		this.packer = new CirclePacker(this.seed, this.dim[0], this.dim[1], this.field._bounds, {
-			count: this.testing ? 1600 : 20000,
-			attempts: this.testing ? 8000 : 140000
+			count: this.testing ? 1600 : 4000,
+			attempts: this.testing ? 8000 : 12000
 		});
 
-		this.field.setup(this._setupForceField(p5));
+		this.forceFieldFn = this._setupForceField(p5);
 		this.packer!.setup().growCirclesIndefinitely();
 	}
 
 	onFirstFrame(p5: p5): void {
-		this.packer!.showMovement(p5, '#00000011');
-		this.packer!.show(p5, '#00000011');
-		this.field.visualize('#00000011', false);
+		this.field.setup(this.forceFieldFn, 0);
+		if (this.testing) {
+			this.packer!.showMovement(p5, '#00000011');
+			this.packer!.show(p5, '#00000011');
+			this.field.visualize('#00000011', false);
+		}
 	}
 
 	onEachTick(p5: p5, progress: number): void {
@@ -125,6 +149,11 @@ export class CurrentSketch extends P5Sketch {
 	}
 
 	onEachFrame(p5: p5, progress: number) {
+		this.field.setup(this.forceFieldFn, 0);
+		// this.packer!.showMovement(p5, '#00000011');
+		// this.packer!.show(p5, '#00000011');
+		// this.field.visualize('#00000011', false);
+
 		this.changeColor(progress);
 		const m = Math.floor(1 + progress * 6) ** 0.5;
 		this.data[0] = Math.floor(this.r.range(4, 10));
@@ -186,14 +215,14 @@ export class CurrentSketch extends P5Sketch {
 		stepLength: number
 	) {
 		const pos = new Vector(x, y);
-		const stepLengthW = Math.max(1, Math.round(this.maxDim * stepLength));
+		const stepLengthW = Math.max(0.5, this.maxDim * stepLength);
 
 		p5.beginShape();
 		p5.stroke(color.transform({ alpha: 0 }).toHex());
 		p5.vertex(pos.x, pos.y);
 
 		for (let n = 0; n < numSteps; n++) {
-			let alpha = 0.0 + (1 - Math.abs(n / numSteps - 0.5) * 2) ** this.drawingMode * 1.0;
+			let alpha = this.alphaBase + (1 - Math.abs(n / numSteps - 0.5) * 2) ** this.drawingMode;
 			p5.stroke(color.transform({ alpha }).toHex());
 
 			let vector = this.field.forceForVector(pos);

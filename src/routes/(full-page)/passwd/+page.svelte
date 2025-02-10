@@ -14,12 +14,15 @@
 	const defaultConfig =
 		'64:GIkhZVXhgWJvlLPgCO1zaixDRS1OWWPgZo1DbuthcVitZLqtO29DOy13O2P2b3X5gIPtGLJEQy1vQWPggIptlLwtXuTYZiTggWXvGEtqguxDRiThOy1jQ2JtZVitaitob3QtcUPhGLqAguqtGITqOy1gaUZDOy1AcV9zGO10O290ai4tbutAGO12Q3RqgBdqO3ntCitqCO15butvguPDcUP5OYh7SLuLMziK';
 
+	const emptyConfig = '33:Hj0MHj0MHj0MHj0MHj0MHj0MHj0MHj0MHcBP';
+
 	$: configStr = defaultConfig;
 
 	onMount(() => {
 		loadConfig(configStr);
 	});
 
+	let valid = true;
 	let config: Config = { separator: '', prefix: '', loaded: false, words: [] };
 	config['words'] = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)).map(
 		(letter) => {
@@ -82,15 +85,22 @@
 			let nInt = parseInt(n);
 			let data = deob(atob(deob(raw, nInt)), nInt).split('\n');
 			let words = data[0].split('-');
+			if (words.length !== 26) {
+				valid = false;
+				throw new Error('Invalid config');
+			}
 			let loaded: Config = {
 				words: words.map((word, i) => ({ letter: String.fromCharCode(97 + i), word })),
 				separator: data[1],
 				prefix: data[2],
 				loaded: true
 			};
+			valid = true;
 			config = loaded;
-		} catch (e) {
+		} catch (e: any) {
 			console.error(e);
+			valid = false;
+			loadConfig(emptyConfig);
 		}
 	}
 
@@ -128,7 +138,11 @@
 			<div class="flex flex-row items-center mt-8">
 				<strong>Passphrase:</strong>
 				<p class="output-text ml-4">
-					<code class="text-white bg-gray-700 p-4 rounded-md">{outputText}</code>
+					{#if valid}
+						<code class="text-white bg-gray-700 p-4 rounded-md">{outputText}</code>
+					{:else}
+						<code class="text-red-500 p-4 font-bold">Invalid Configuration</code>
+					{/if}
 				</p>
 			</div>
 		{/if}
@@ -141,7 +155,9 @@
 			<label for="config" class="text-lg font-bold">Config</label>
 			<textarea
 				id="config"
-				class="p-2 border border-gray-300 rounded-md w-full"
+				class="p-2 border rounded-md w-full {valid
+					? 'border-green-500 bg-green-50'
+					: 'border-red-500 bg-red-50'}"
 				value={configStr}
 				rows="4"
 				on:input={onConfigProvided}

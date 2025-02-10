@@ -9,7 +9,7 @@ type ForceFieldOptions = {
 };
 
 // sginature for force_field function
-export type ForceFieldFunction = (self: ForceField, col: number, row: number) => Vector;
+export type ForceFieldFunction = (self: ForceField, col: number, row: number, t: number) => Vector;
 
 export class ForceField {
 	width: number;
@@ -30,6 +30,7 @@ export class ForceField {
 	_topY: number;
 	_bottomY: number;
 	_field: Vector[][];
+	_field_cached: boolean;
 	_bounds: [number, number];
 
 	constructor(
@@ -57,27 +58,35 @@ export class ForceField {
 		this.cols = Math.floor((this._rightX - this._leftX) / this.resolution);
 		this.rows = Math.floor((this._bottomY - this._topY) / this.resolution);
 
+		this._field_cached = false;
 		this._field = Array.from({ length: this.cols }, () =>
 			Array.from({ length: this.rows }, () => new Vector(0, 0))
 		);
 	}
 
 	destroy() {
-		this._field = [];
+		this._field_cached = false;
+		this._field = Array.from({ length: this.cols }, () =>
+			Array.from({ length: this.rows }, () => new Vector(0, 0))
+		);
 	}
 
-	setup(fn: ForceFieldFunction | null = null) {
+	setup(fn: ForceFieldFunction | null = null, t: number = 0) {
+		if (t == 0 && this._field_cached) return this;
+
 		for (let i = 0; i < this.cols; i++) {
 			for (let j = 0; j < this.rows; j++) {
-				const v: Vector = fn ? fn(this, i, j) : this.forceFieldFor(this, i, j);
+				const v: Vector = fn ? fn(this, i, j, t) : this.forceFieldFor(this, i, j, t);
 				this._field[i][j] = v.mult(this.resolution);
 			}
 		}
+
+		this._field_cached = t == 0;
 		return this;
 	}
 
 	forceFieldFor(
-		...[self, col, row]: Parameters<ForceFieldFunction>
+		...[self, col, row, t]: Parameters<ForceFieldFunction>
 	): ReturnType<ForceFieldFunction> {
 		return Vector.fromAngle((row / this.rows) * Math.PI, 1);
 	}
@@ -115,8 +124,18 @@ export class ForceField {
 	}
 
 	joinForces(...forces: ForceFieldFunction[]): ForceFieldFunction {
-		return (self: ForceField, col: number, row: number) => {
-			return forces.reduce((acc, force) => acc.add(force(self, col, row)), new Vector(0, 0));
+		return (self: ForceField, col: number, row: number, t: number = 0) => {
+			const vectors = forces.map((fn) => fn(self, col, row, t));
+			const sum = vectors.reduce((acc, v) => acc.add(v), new Vector(0, 0));
+
+			// Ensure minimum vector magnitude to prevent stagnation
+			const minStrength = 0.005 * this.resolution;
+			if (sum.mag() < minStrength) {
+				// Fallback to averaged direction with minimum strength
+				const avgAngle = vectors.reduce((acc, v) => acc + v.heading(), 0) / vectors.length;
+				return Vector.fromAngle(avgAngle, minStrength);
+			}
+			return sum;
 		};
 	}
 
@@ -227,24 +246,26 @@ export class ForceField {
 
 	perlinNoiseField({
 		scale = 0.015,
-		strength = 1
-	}: { scale?: number; strength?: number } = {}): ForceFieldFunction {
-		return (self: ForceField, col: number, row: number) => {
+		strength = 1,
+		timeSpeed = 0.1
+	}: { scale?: number; strength?: number; timeSpeed?: number } = {}): ForceFieldFunction {
+		return (self: ForceField, col: number, row: number, t: number = 0) => {
 			const x = col * scale;
 			const y = row * scale;
-			const angle = self.p5!.map(self.p5!.noise(x, y), 0, 1, 0, 2 * Math.PI);
+			const angle = self.p5!.map(self.p5!.noise(x, y, t * timeSpeed), 0, 1, 0, 2 * Math.PI);
 			return Vector.fromAngle(angle, strength);
 		};
 	}
 
 	radialPerlinNoiseField({
 		strength = 1,
-		scale = 0.015
-	}: { strength?: number; scale?: number } = {}): ForceFieldFunction {
-		return (self: ForceField, col: number, row: number) => {
+		scale = 0.015,
+		timeSpeed = 0.1
+	}: { strength?: number; scale?: number; timeSpeed?: number } = {}): ForceFieldFunction {
+		return (self: ForceField, col: number, row: number, t: number = 0) => {
 			const x = col - self.cols / 2;
 			const y = row - self.rows / 2;
-			const angle = self.p5!.noise(x * scale, y * scale) * Math.PI * 2;
+			const angle = self.p5!.noise(x * scale, y * scale, t * timeSpeed) * Math.PI * 2;
 			return Vector.fromAngle(angle, strength);
 		};
 	}
@@ -252,15 +273,15 @@ export class ForceField {
 	simplexNoiseField({
 		scale = 0.001,
 		strength = 1,
-		t = 0
-	}: { scale?: number; strength?: number; t?: number } = {}): ForceFieldFunction {
+		timeSpeed = 0.1
+	}: { scale?: number; strength?: number; timeSpeed?: number } = {}): ForceFieldFunction {
 		const random = Random.seeded(this.r.random() * 1000000000000000);
 		const noise = makeNoise3D(random);
 		const [m, n] = [this.r.range(0, this.cols), this.r.range(0, this.rows)];
-		return (self: ForceField, col: number, row: number) => {
+		return (self: ForceField, col: number, row: number, t: number = 0) => {
 			const x = (col - m) * scale;
 			const y = (row - n) * scale;
-			const angle = noise(x, y, t) * Math.PI * 2;
+			const angle = noise(x, y, t * timeSpeed) * Math.PI * 2;
 			return Vector.fromAngle(angle, strength);
 		};
 	}
@@ -270,21 +291,21 @@ export class ForceField {
 		strength = 1,
 		octaves = 4,
 		multiplier = 2,
-		t = 0
+		timeSpeed = 0.1
 	}: {
 		scale?: number;
 		strength?: number;
 		octaves?: number;
 		multiplier?: number;
-		t?: number;
+		timeSpeed?: number;
 	} = {}): ForceFieldFunction {
 		const random = Random.seeded(this.r.random() * 1000000000000000);
 		const noise = makeNoise3D(random);
 		const [m, n] = [this.r.range(0, this.cols), this.r.range(0, this.rows)];
-		return (self: ForceField, col: number, row: number) => {
+		return (self: ForceField, col: number, row: number, t: number = 0) => {
 			const x = (col - m) * scale;
 			const y = (row - n) * scale;
-			const angle = this._fractalNoiseAngles(noise, x, y, t, octaves, multiplier);
+			const angle = this._fractalNoiseAngles(noise, x, y, t * timeSpeed, octaves, multiplier);
 			return Vector.fromAngle(angle, strength);
 		};
 	}
@@ -294,20 +315,20 @@ export class ForceField {
 		strength = 1,
 		octaves = 4,
 		multiplier = 2,
-		t = 0
+		timeSpeed = 0.1
 	}: {
 		scale?: number;
 		strength?: number;
 		octaves?: number;
 		multiplier?: number;
-		t?: number;
+		timeSpeed?: number;
 	} = {}): ForceFieldFunction {
 		const noise = this.p5!.noise;
 		const [m, n] = [this.r.range(0, this.cols), this.r.range(0, this.rows)];
-		return (self: ForceField, col: number, row: number) => {
+		return (self: ForceField, col: number, row: number, t: number = 0) => {
 			const x = (col - m) * scale;
 			const y = (row - n) * scale;
-			const angle = this._fractalNoiseAngles(noise, x, y, t, octaves, multiplier);
+			const angle = this._fractalNoiseAngles(noise, x, y, t * timeSpeed, octaves, multiplier);
 			return Vector.fromAngle(angle, strength);
 		};
 	}
@@ -333,44 +354,55 @@ export class ForceField {
 		return (value / wt) * Math.PI * 2;
 	}
 
-	repulsorFieldAt(x: number, y: number, strength: number = 3): ForceFieldFunction {
+	repulsorFieldAt(
+		x: number,
+		y: number,
+		strength: number = 3,
+		timeSpeed: number = 0.1
+	): ForceFieldFunction {
 		const idx = this.indexFor(x, y);
 
-		return (self: ForceField, i: number, j: number) => {
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
 			const dx = i - idx[0];
 			const dy = j - idx[1];
 			const distance = Math.sqrt(dx * dx + dy * dy);
 			const decay = strength / Math.max(distance, 1) ** (1 / 3);
 			const angle = Math.atan2(dy, dx);
-			return Vector.fromAngle(angle, decay);
+			return Vector.fromAngle(angle, decay + t * timeSpeed);
 		};
 	}
 
-	attractorFieldAt(x: number, y: number, strength: number = 1): ForceFieldFunction {
-		return this.repulsorFieldAt(x, y, -strength);
+	attractorFieldAt(
+		x: number,
+		y: number,
+		strength: number = 1,
+		timeSpeed: number = 0.1
+	): ForceFieldFunction {
+		return this.repulsorFieldAt(x, y, -strength, timeSpeed);
 	}
 
 	radialWaveAt(
 		x: number,
 		y: number,
 		strength: number = 1,
-		frequency: number = Math.PI
+		frequency: number = Math.PI,
+		timeSpeed: number = 0.1
 	): ForceFieldFunction {
 		const idx = this.indexFor(x, y);
-		return (self: ForceField, i: number, j: number) => {
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
 			const dx = i - idx[0];
 			const dy = j - idx[1];
 			const distance = Math.sqrt(dx * dx + dy * dy);
 			const angle = Math.atan2(dy, dx);
-			const wave = Math.sin(distance * frequency) * strength;
+			const wave = Math.sin(distance * frequency + t * timeSpeed) * strength;
 			return Vector.fromAngle(angle, wave);
 		};
 	}
 
-	randomField({ strength = 1 }: { strength?: number } = {}) {
-		return (self: ForceField, i: number, j: number) => {
+	randomField({ strength = 1, timeSpeed = 0.1 }: { strength?: number; timeSpeed?: number } = {}) {
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
 			const angle = Math.random() * Math.PI * 2;
-			return Vector.fromAngle(angle, strength);
+			return Vector.fromAngle(angle, strength + t * timeSpeed);
 		};
 	}
 
@@ -378,21 +410,24 @@ export class ForceField {
 		strength = 4,
 		frequency = 0.001,
 		scale = 0.005,
-		phase = 0
+		phase = 0,
+		timeSpeed = 0.1
 	}: {
 		strength?: number;
 		frequency?: number;
 		scale?: number;
 		phase?: number;
+		timeSpeed?: number;
 	} = {}) {
-		return (self: ForceField, i: number, j: number) => {
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
 			// Base angle determined by Perlin noise, modified by randomness
 			const noise = self.p5!.noise(i * scale, j * scale);
 			const angle = self.p5!.map(noise, 0, 1, 0, Math.PI * 2);
 
 			// Compute the wave's effect at this point
 			const effect = i * Math.cos(angle) + j * Math.sin(angle);
-			const wavePhase = (0.5 + Math.sin(effect * frequency + phase)) * strength;
+			phase = effect * frequency + phase + t * timeSpeed;
+			const wavePhase = (0.5 + Math.sin(phase)) * strength;
 
 			// Convert the base angle and wave phase into a vector
 			return Vector.fromAngle(angle).mult(wavePhase);
@@ -403,16 +438,18 @@ export class ForceField {
 		strength = 1,
 		frequencyX = 0.01,
 		frequencyY = 0.01,
-		phase = 0
+		phase = 0,
+		timeSpeed = 0.1
 	}: {
 		strength?: number;
 		frequencyX?: number;
 		frequencyY?: number;
 		phase?: number;
+		timeSpeed?: number;
 	} = {}) {
-		return (self: ForceField, i: number, j: number) => {
-			const waveX = Math.sin(i * frequencyX + phase) * strength;
-			const waveY = Math.sin(j * frequencyY + phase) * strength;
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
+			const waveX = Math.sin(i * frequencyX + phase + t * timeSpeed) * strength;
+			const waveY = Math.sin(j * frequencyY + phase + t * timeSpeed) * strength;
 			return new Vector(waveX, waveY);
 		};
 	}
@@ -422,29 +459,33 @@ export class ForceField {
 		northY: number,
 		southX: number,
 		southY: number,
-		{ strength = 1 }: { strength?: number } = {}
+		{ strength = 1, timeSpeed = 0.1 }: { strength?: number; timeSpeed?: number } = {}
 	) {
 		const nIdx = this.indexFor(northX, northY);
 		const sIdx = this.indexFor(southX, southY);
 
-		return (self: ForceField, i: number, j: number) => {
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
 			const dxN = i - nIdx[0];
 			const dyN = j - nIdx[1];
 			const dxS = i - sIdx[0];
 			const dyS = j - sIdx[1];
 
 			const dR = dxN * dxN + dyN * dyN;
+			strength = strength + t * timeSpeed;
 			const forceFromNorth = Vector.fromAngle(Math.atan2(dyN, dxN), strength / dR);
 			const forceFromSouth = Vector.fromAngle(Math.atan2(dyS, dxS), strength / dR);
 			return Vector.add(forceFromNorth, forceFromSouth);
 		};
 	}
 
-	gradientField({ strength = 1, angle = 0 }: { strength?: number; angle?: number } = {}) {
+	gradientField({
+		strength = 1,
+		angle = 0,
+		timeSpeed = 0.1
+	}: { strength?: number; angle?: number; timeSpeed?: number } = {}) {
 		const radians = (angle / 180) * Math.PI;
-		return (self: ForceField, i: number, j: number) => {
-			const angle = Math.atan2(j, i);
-			return Vector.fromAngle(radians, strength);
+		return (self: ForceField, i: number, j: number, t: number = 0) => {
+			return Vector.fromAngle(radians, strength + t * timeSpeed);
 		};
 	}
 }

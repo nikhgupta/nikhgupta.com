@@ -68,10 +68,33 @@
 
 	onDestroy(destroyCurrent);
 
+	const saveAndDownload = () => {
+		const p5Instance = window._p5Instance;
+		if (!p5Instance) return;
+
+		const canvas = p5Instance.canvas as HTMLCanvasElement;
+		const dataUrl = canvas.toDataURL('image/png');
+		const link = document.createElement('a');
+		link.download = `sketch-${data.slug}-${seed}.png`;
+		link.href = dataUrl;
+		link.click();
+		URL.revokeObjectURL(dataUrl);
+	};
+
 	const onKeyDown = (e: KeyboardEvent) => {
 		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return;
 
-		const recognized = ['Space', 'Slash', 'Enter', 'KeyR', 'KeyM', 'KeyD', 'Equal', 'Minus'];
+		const recognized = [
+			'Space',
+			'Slash',
+			'Enter',
+			'KeyR',
+			'KeyM',
+			'KeyD',
+			'KeyS',
+			'Equal',
+			'Minus'
+		];
 		if (!recognized.includes(e.code)) return;
 
 		e.preventDefault();
@@ -89,6 +112,8 @@
 		} else if (e.code === 'KeyR') {
 			frameRate = 0;
 			onResize();
+		} else if (e.code === 'KeyS') {
+			saveAndDownload();
 		} else if (e.code === 'Equal') {
 			frameRate += 1;
 			onResize();

@@ -33,6 +33,7 @@
 		<li>Press <code>m</code> to toggle text on screen.</li>
 		<li>Press <code>-</code> to try and decrease frameRate.</li>
 		<li>Press <code>+</code> to try and increase frameRate.</li>
+		<li>Press <code>S</code> to save and download the current image/sketch as a PNG.</li>
 		<li>Press <code>/</code> to toggle this help.</li>
 	</ul>
 
